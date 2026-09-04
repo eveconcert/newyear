@@ -353,11 +353,14 @@ function renderRejected(container, order) {
 
 function renderTicket(container, order) {
   const packageLabel = order.ticketType === "vip" ? t("package_vip_name") : t("package_normal_name");
-  const qrTarget = document.createElement("div"); // placeholder, canvas gets appended after innerHTML set
 
   container.innerHTML = `
     <div class="ticket">
       <div class="ticket__main">
+        <img class="ticket__poster" src="images/hero-banner.jpg" alt="" />
+      </div>
+
+      <div class="ticket__stub">
         <p class="ticket__eyebrow">${t("ticket_eyebrow")}</p>
         <h3 class="ticket__heading">${t("ticket_subheading")}</h3>
         <span class="ticket__badge ticket__badge--${order.ticketType}">${packageLabel}</span>
@@ -372,15 +375,11 @@ function renderTicket(container, order) {
             <dd>${escapeHtml(order.phone)}</dd>
           </div>
           <div>
-            <dt>${t("ticket_qty_label")}</dt>
-            <dd>${order.quantity}</dd>
+            <dt>${t("ticket_id_label")}</dt>
+            <dd class="ticket__id">${escapeHtml(order.reference)}</dd>
           </div>
         </dl>
-      </div>
 
-      <div class="ticket__stub">
-        <p class="ticket__id-label">${t("ticket_id_label")}</p>
-        <p class="ticket__id">${escapeHtml(order.reference)}</p>
         <div class="ticket__qr" id="ticket-qr"></div>
         <p class="ticket__scan-label">${t("ticket_scan_label")}</p>
       </div>
@@ -388,15 +387,32 @@ function renderTicket(container, order) {
   `;
 
   const qrHost = document.getElementById("ticket-qr");
-  if (qrHost && window.QRCode) {
-    const canvas = document.createElement("canvas");
-    qrHost.appendChild(canvas);
-    QRCode.toCanvas(canvas, order.reference, { width: 148, margin: 1 }, (err) => {
-      if (err) qrHost.textContent = order.reference;
-    });
-  } else if (qrHost) {
-    qrHost.textContent = order.reference;
+  if (qrHost) {
+    try {
+      qrHost.innerHTML = makeQrSvg(order.reference);
+    } catch (e) {
+      qrHost.textContent = order.reference;
+    }
   }
+}
+
+// The vendored qrcode-generator library (vendor/qrcode.min.js, global
+// `qrcode`) needs an explicit "type number" (roughly, QR code size/
+// capacity) rather than picking one automatically — it throws if the
+// text doesn't fit the requested size. So we just try increasing sizes
+// until one fits, same as the library's own official demos do.
+function makeQrSvg(text) {
+  for (let typeNumber = 1; typeNumber <= 20; typeNumber++) {
+    try {
+      const qr = qrcode(typeNumber, "M");
+      qr.addData(text);
+      qr.make();
+      return qr.createSvgTag(4, 0);
+    } catch (e) {
+      // too small for this typeNumber — try the next size up
+    }
+  }
+  throw new Error("Could not generate QR code");
 }
 
 function escapeHtml(str) {

@@ -674,42 +674,62 @@ section {
 
 .ticket {
   display: grid;
-  grid-template-columns: 1fr 190px;
-  border-radius: 8px;
+  grid-template-columns: 1.6fr 1fr;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--gold);
-  background: linear-gradient(160deg, var(--navy-light), var(--navy) 65%, var(--ink-deep));
+  background: var(--navy);
 }
 
 .ticket__main {
-  padding: 28px 24px;
   position: relative;
+  min-height: 220px;
+  background: var(--ink-deep);
+}
+
+.ticket__poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ticket__stub {
+  background: linear-gradient(165deg, var(--navy-light), var(--navy) 60%, var(--ink-deep));
+  border-left: 2px dashed rgba(217, 164, 65, 0.5);
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .ticket__eyebrow {
-  margin: 0 0 4px;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--gold);
 }
 
 .ticket__heading {
-  margin: 0 0 14px;
+  margin: 2px 0 12px;
   font-family: "Fraunces", "Noto Sans Ethiopic", serif;
-  font-size: 1.3rem;
-  color: var(--gold-bright);
+  font-size: 1.15rem;
+  line-height: 1.25;
+  color: var(--cream);
 }
 
 .ticket__badge {
   display: inline-block;
-  padding: 4px 12px;
+  align-self: flex-start;
+  padding: 4px 14px;
   border-radius: 999px;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .ticket__badge--normal {
@@ -726,48 +746,30 @@ section {
 .ticket__fields {
   display: grid;
   gap: 12px;
-  margin: 0;
+  margin: 0 0 18px;
+  padding-top: 14px;
+  border-top: 1px dotted var(--line);
 }
 
 .ticket__fields dt {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
+  letter-spacing: 0.1em;
+  color: var(--gold);
   margin-bottom: 2px;
 }
 
 .ticket__fields dd {
   margin: 0;
   color: var(--cream);
-  font-size: 1rem;
+  font-size: 0.98rem;
 }
 
-.ticket__stub {
-  background: var(--ink-deep);
-  border-left: 2px dashed var(--line);
-  padding: 24px 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
-}
-
-.ticket__id-label {
-  margin: 0;
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-.ticket__id {
-  margin: 0 0 8px;
+.ticket__fields dd.ticket__id {
   font-family: "Fraunces", "Noto Sans Ethiopic", serif;
   color: var(--gold-bright);
-  font-size: 0.95rem;
-  word-break: break-all;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
 }
 
 .ticket__qr {
@@ -775,15 +777,20 @@ section {
   padding: 8px;
   border-radius: 4px;
   line-height: 0;
+  width: fit-content;
 }
 
-.ticket__qr canvas {
+.ticket__qr svg {
   display: block;
+  width: 120px;
+  height: 120px;
 }
 
 .ticket__scan-label {
   margin: 8px 0 0;
   font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -792,9 +799,13 @@ section {
     grid-template-columns: 1fr;
   }
 
+  .ticket__main {
+    min-height: 160px;
+  }
+
   .ticket__stub {
     border-left: none;
-    border-top: 2px dashed var(--line);
+    border-top: 2px dashed rgba(217, 164, 65, 0.5);
   }
 }
 
