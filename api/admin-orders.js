@@ -7,6 +7,8 @@ const { isValidAdminSession } = require("./_adminSession");
 const db = admin.firestore();
 
 module.exports = async (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }

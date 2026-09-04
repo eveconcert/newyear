@@ -10,6 +10,8 @@ const db = admin.firestore();
 const VALID_STATUSES = ["approved", "rejected", "pending_review"];
 
 module.exports = async (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
