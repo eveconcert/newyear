@@ -401,13 +401,36 @@ function renderTicket(container, order) {
 // capacity) rather than picking one automatically — it throws if the
 // text doesn't fit the requested size. So we just try increasing sizes
 // until one fits, same as the library's own official demos do.
+//
+// We build the <svg> ourselves from the module grid (qr.isDark(row,col))
+// instead of using the library's own createSvgTag(): that helper emits a
+// fixed-pixel SVG with NO viewBox, so once CSS resizes it to fit the
+// ticket layout, browsers have nothing to scale the drawing coordinates
+// against — the QR can end up clipped or blank depending on the browser.
+// A real viewBox tied to the module count fixes that for good.
 function makeQrSvg(text) {
   for (let typeNumber = 1; typeNumber <= 20; typeNumber++) {
     try {
       const qr = qrcode(typeNumber, "M");
       qr.addData(text);
       qr.make();
-      return qr.createSvgTag(4, 0);
+
+      const count = qr.getModuleCount();
+      let path = "";
+      for (let row = 0; row < count; row++) {
+        for (let col = 0; col < count; col++) {
+          if (qr.isDark(row, col)) {
+            path += `M${col},${row}h1v1h-1z`;
+          }
+        }
+      }
+
+      return (
+        `<svg viewBox="0 0 ${count} ${count}" xmlns="http://www.w3.org/2000/svg" ` +
+        `shape-rendering="crispEdges" preserveAspectRatio="xMidYMid meet">` +
+        `<rect width="${count}" height="${count}" fill="#ffffff"/>` +
+        `<path d="${path}" fill="#111"/></svg>`
+      );
     } catch (e) {
       // too small for this typeNumber — try the next size up
     }
