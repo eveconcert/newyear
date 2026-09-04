@@ -203,6 +203,11 @@ document.getElementById("lightbox")?.addEventListener("click", () => {
   document.getElementById("lightbox").hidden = true;
 });
 
+document.getElementById("lightbox-close")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  document.getElementById("lightbox").hidden = true;
+});
+
 document.getElementById("refresh-btn")?.addEventListener("click", loadOrders);
 
 document.getElementById("logout-btn")?.addEventListener("click", async () => {
