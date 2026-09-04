@@ -288,11 +288,11 @@ function finishOrder(container, reference, payload) {
         <div class="telebirr-box__body">
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Account name</span>
-            <span class="telebirr-box__value">Eve Concert</span>
+            <span class="telebirr-box__value">WEYENESHT</span>
           </div>
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Telebirr number</span>
-            <span class="telebirr-box__value telebirr-box__value--number">0912 345 678</span>
+            <span class="telebirr-box__value telebirr-box__value--number">0990847399</span>
           </div>
           <div class="telebirr-box__amount">
             <span class="telebirr-box__amount-label">Amount to send</span>
