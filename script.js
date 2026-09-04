@@ -62,6 +62,7 @@ function initModal() {
   function closeModal() {
     overlay.hidden = true;
     document.body.style.overflow = "";
+    stopStatusPolling();
   }
 
   buyBtn.addEventListener("click", () => {
@@ -87,7 +88,7 @@ function initModal() {
 
 // ---------- Order form ----------
 
-const PACKAGE_PRICES_ETB = { normal: 25000, vvip: 50000 };
+const PACKAGE_PRICES_ETB = { normal: 25000, vip: 50000 };
 const MIN_TICKETS = 1;
 const MAX_TICKETS = 6;
 
@@ -225,10 +226,10 @@ function finishOrder(container, reference, payload) {
     </div>
   `;
 
-  initScreenshotUpload(reference);
+  initScreenshotUpload(container, reference, payload);
 }
 
-function initScreenshotUpload(reference) {
+function initScreenshotUpload(container, reference, payload) {
   const input = document.getElementById("screenshot-input");
   const submitBtn = document.getElementById("screenshot-submit");
   const errorEl = document.getElementById("screenshot-error");
@@ -258,9 +259,7 @@ function initScreenshotUpload(reference) {
 
       if (!res.ok) throw new Error("Server error");
 
-      uploadBox.innerHTML = `
-        <p class="screenshot-done">${t("screenshot_done")}</p>
-      `;
+      startStatusPolling(container, reference, payload);
     } catch (err) {
       errorEl.textContent = t("screenshot_error_read");
       errorEl.hidden = false;
@@ -268,6 +267,142 @@ function initScreenshotUpload(reference) {
       submitBtn.textContent = t("screenshot_button");
     }
   });
+}
+
+// ---------- Live status polling + ticket ----------
+//
+// After the screenshot is uploaded, the buyer's own browser polls
+// /api/order-status (public, keyed by reference+phone) so the ticket
+// appears here the instant an admin approves the order — no login
+// needed. Only runs while this modal/page stays open; if the buyer
+// closes it, polling stops (there's no "come back later and check"
+// page yet).
+
+const STATUS_POLL_INTERVAL_MS = 5000;
+const STATUS_POLL_TIMEOUT_MS = 45 * 60 * 1000; // give up nagging the server after 45 min
+let statusPollTimer = null;
+
+function stopStatusPolling() {
+  if (statusPollTimer) {
+    clearInterval(statusPollTimer);
+    statusPollTimer = null;
+  }
+}
+
+function startStatusPolling(container, reference, payload) {
+  container.innerHTML = `
+    <div class="order__success order__waiting" id="status-waiting">
+      <div class="spinner" aria-hidden="true"></div>
+      <h3>${t("waiting_heading")}</h3>
+      <p>${t("waiting_body")}</p>
+      <p class="order__ref">${reference}</p>
+      <p class="order__error" id="status-error" hidden></p>
+    </div>
+  `;
+
+  const startedAt = Date.now();
+
+  async function poll() {
+    if (Date.now() - startedAt > STATUS_POLL_TIMEOUT_MS) {
+      stopStatusPolling();
+      const waitingEl = document.getElementById("status-waiting");
+      if (waitingEl) {
+        waitingEl.querySelector(".spinner")?.remove();
+        waitingEl.querySelector("p").textContent = t("waiting_timeout");
+      }
+      return;
+    }
+
+    try {
+      const url = `/api/order-status?reference=${encodeURIComponent(reference)}&phone=${encodeURIComponent(payload.phone)}`;
+      const res = await fetch(url);
+      if (!res.ok) return; // transient network/server hiccup — just try again next tick
+
+      const order = await res.json();
+
+      if (order.status === "approved") {
+        stopStatusPolling();
+        renderTicket(container, order);
+      } else if (order.status === "rejected") {
+        stopStatusPolling();
+        renderRejected(container, order);
+      }
+      // pending_payment / pending_review: keep waiting silently
+    } catch (err) {
+      const errorEl = document.getElementById("status-error");
+      if (errorEl) {
+        errorEl.textContent = t("status_check_error");
+        errorEl.hidden = false;
+      }
+    }
+  }
+
+  poll();
+  statusPollTimer = setInterval(poll, STATUS_POLL_INTERVAL_MS);
+}
+
+function renderRejected(container, order) {
+  container.innerHTML = `
+    <div class="order__success">
+      <h3>${t("rejected_heading")}</h3>
+      <p>${t("rejected_body")}</p>
+      <p class="order__ref">${order.reference}</p>
+    </div>
+  `;
+}
+
+function renderTicket(container, order) {
+  const packageLabel = order.ticketType === "vip" ? t("package_vip_name") : t("package_normal_name");
+  const qrTarget = document.createElement("div"); // placeholder, canvas gets appended after innerHTML set
+
+  container.innerHTML = `
+    <div class="ticket">
+      <div class="ticket__main">
+        <p class="ticket__eyebrow">${t("ticket_eyebrow")}</p>
+        <h3 class="ticket__heading">${t("ticket_subheading")}</h3>
+        <span class="ticket__badge ticket__badge--${order.ticketType}">${packageLabel}</span>
+
+        <dl class="ticket__fields">
+          <div>
+            <dt>${t("ticket_name_label")}</dt>
+            <dd>${escapeHtml(order.fullName)}</dd>
+          </div>
+          <div>
+            <dt>${t("ticket_phone_label")}</dt>
+            <dd>${escapeHtml(order.phone)}</dd>
+          </div>
+          <div>
+            <dt>${t("ticket_qty_label")}</dt>
+            <dd>${order.quantity}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="ticket__stub">
+        <p class="ticket__id-label">${t("ticket_id_label")}</p>
+        <p class="ticket__id">${escapeHtml(order.reference)}</p>
+        <div class="ticket__qr" id="ticket-qr"></div>
+        <p class="ticket__scan-label">${t("ticket_scan_label")}</p>
+      </div>
+    </div>
+  `;
+
+  const qrHost = document.getElementById("ticket-qr");
+  if (qrHost && window.QRCode) {
+    const canvas = document.createElement("canvas");
+    qrHost.appendChild(canvas);
+    QRCode.toCanvas(canvas, order.reference, { width: 148, margin: 1 }, (err) => {
+      if (err) qrHost.textContent = order.reference;
+    });
+  } else if (qrHost) {
+    qrHost.textContent = order.reference;
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
 }
 
 document.addEventListener("DOMContentLoaded", () => {

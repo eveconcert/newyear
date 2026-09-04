@@ -164,7 +164,7 @@ function orderCardHtml(order) {
     : `<div class="order-card__thumb order-card__thumb--empty">No screenshot</div>`;
 
   const canReview = order.status === "pending_review";
-  const packageLabel = order.ticketType === "vvip" ? "VVIP" : "Normal";
+  const packageLabel = order.ticketType === "vip" ? "VIP" : "Normal";
 
   const actions =
     order.status === "approved" || order.status === "rejected"

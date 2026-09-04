@@ -16,7 +16,7 @@ const db = admin.firestore();
 
 // Prices are decided here, server-side, and never trusted from the
 // client — otherwise someone could submit a fake cheaper total.
-const PACKAGE_PRICES_ETB = { normal: 25000, vvip: 50000 };
+const PACKAGE_PRICES_ETB = { normal: 25000, vip: 50000 };
 
 function generateReference() {
   const stamp = Date.now().toString(36).toUpperCase();
