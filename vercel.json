@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/manage",   "destination": "/admin.html"  },
+    { "source": "/verify",   "destination": "/verify.html" }
+  ],
+  "redirects": [
+    { "source": "/admin",      "destination": "/manage", "permanent": false },
+    { "source": "/admin.html", "destination": "/manage", "permanent": false }
+  ]
+}
