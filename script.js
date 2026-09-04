@@ -87,7 +87,9 @@ function initModal() {
 
 // ---------- Order form ----------
 
-const TICKET_PRICE_ETB = 25000;
+const PACKAGE_PRICES_ETB = { normal: 25000, vvip: 50000 };
+const MIN_TICKETS = 1;
+const MAX_TICKETS = 6;
 
 function formatEtb(amount) {
   return amount.toLocaleString() + " ETB";
@@ -120,18 +122,43 @@ function compressImage(file, maxWidth = 1000, quality = 0.7) {
 
 function initOrderForm() {
   const form = document.getElementById("order-form");
-  const quantitySelect = document.getElementById("quantity");
+  const quantityInput = document.getElementById("quantity");
+  const qtyDecrease = document.getElementById("qty-decrease");
+  const qtyIncrease = document.getElementById("qty-increase");
+  const packageToggle = document.getElementById("package-toggle");
   const totalEl = document.getElementById("order-total");
   const errorEl = document.getElementById("order-error");
   const submitBtn = document.getElementById("order-submit");
   const container = document.getElementById("order-form-container");
 
+  let selectedPackage = "normal";
+
   function updateTotal() {
-    const qty = Number(quantitySelect.value);
-    totalEl.textContent = formatEtb(TICKET_PRICE_ETB * qty);
+    const qty = Number(quantityInput.value);
+    totalEl.textContent = formatEtb(PACKAGE_PRICES_ETB[selectedPackage] * qty);
   }
 
-  quantitySelect.addEventListener("change", updateTotal);
+  packageToggle.querySelectorAll(".package-toggle__btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedPackage = btn.dataset.package;
+      packageToggle.querySelectorAll(".package-toggle__btn").forEach((b) => {
+        const active = b === btn;
+        b.classList.toggle("package-toggle__btn--active", active);
+        b.setAttribute("aria-checked", String(active));
+      });
+      updateTotal();
+    });
+  });
+
+  function setQuantity(next) {
+    const clamped = Math.min(MAX_TICKETS, Math.max(MIN_TICKETS, next));
+    quantityInput.value = clamped;
+    updateTotal();
+  }
+
+  qtyDecrease.addEventListener("click", () => setQuantity(Number(quantityInput.value) - 1));
+  qtyIncrease.addEventListener("click", () => setQuantity(Number(quantityInput.value) + 1));
+
   updateTotal();
 
   form.addEventListener("submit", async (e) => {
@@ -140,12 +167,12 @@ function initOrderForm() {
 
     const payload = {
       fullName: document.getElementById("fullName").value.trim(),
-      email: document.getElementById("email").value.trim(),
       phone: document.getElementById("phone").value.trim(),
-      quantity: Number(quantitySelect.value),
+      quantity: Number(quantityInput.value),
+      ticketType: selectedPackage,
     };
 
-    if (!payload.fullName || !payload.email || !payload.phone) {
+    if (!payload.fullName || !payload.phone) {
       errorEl.textContent = t("form_error_required");
       errorEl.hidden = false;
       return;

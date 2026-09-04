@@ -164,6 +164,7 @@ function orderCardHtml(order) {
     : `<div class="order-card__thumb order-card__thumb--empty">No screenshot</div>`;
 
   const canReview = order.status === "pending_review";
+  const packageLabel = order.ticketType === "vvip" ? "VVIP" : "Normal";
 
   const actions =
     order.status === "approved" || order.status === "rejected"
@@ -180,7 +181,7 @@ function orderCardHtml(order) {
       ${thumb}
       <div class="order-card__info">
         <span class="order-card__name">${escapeHtml(order.fullName)}</span>
-        <span class="order-card__meta">${escapeHtml(order.email)} · ${escapeHtml(order.phone)}</span>
+        <span class="order-card__meta">${escapeHtml(order.phone)} · ${escapeHtml(packageLabel)}</span>
         <span class="order-card__meta">${order.quantity} ticket(s) · ${order.totalEtb.toLocaleString()} ETB</span>
         <span class="order-card__ref">${order.reference}</span>
       </div>

@@ -48,10 +48,12 @@ const translations = {
     modal_reserve_label: "Reserve",
     modal_heading: "Hold your tickets",
     modal_intro:
-      "Fill in your details to reserve tickets for the Main Event package. Payment is currently handled manually — you'll be contacted directly to complete it.",
+      "Fill in your details to reserve your tickets. Payment is currently handled manually — you'll be contacted directly to complete it.",
     field_fullname: "Full name",
-    field_email: "Email",
     field_phone: "Phone",
+    field_package: "Package",
+    package_normal_name: "Normal",
+    package_vvip_name: "VVIP",
     field_tickets: "Tickets",
     total_label: "Total",
     submit_button: "Reserve tickets",
@@ -59,12 +61,12 @@ const translations = {
     form_error_required: "Please fill in all fields.",
     form_error_network: "Could not reach the server — check your connection and try again.",
     order_disclaimer:
-      "This reserves your order for the Main Event package. Payment is handled manually for now — you'll be contacted to complete payment and confirm your ticket.",
+      "This reserves your order. Payment is handled manually for now — you'll be contacted to complete payment and confirm your ticket.",
 
     success_heading: "Order received",
     success_ref_label: "Your reference number:",
     success_body:
-      "This reserves your place at the Main Event package. Once you've paid, upload a screenshot of the payment below and our team will confirm your ticket.",
+      "This reserves your place. Once you've paid, upload a screenshot of the payment below and our team will confirm your ticket.",
     screenshot_label: "Payment screenshot",
     screenshot_button: "Upload screenshot",
     screenshot_button_loading: "Uploading…",
@@ -113,10 +115,12 @@ const translations = {
     modal_reserve_label: "ያስይዙ",
     modal_heading: "ትኬትዎን ያስይዙ",
     modal_intro:
-      "ለዋናው ዝግጅት ጥቅል ትኬት ለማስያዝ መረጃዎን ይሙሉ። ክፍያ በአሁኑ ጊዜ በእጅ ይስተናገዳል — ክፍያውን ለማጠናቀቅ በቀጥታ እናገኝዎታለን።",
+      "ትኬትዎን ለማስያዝ መረጃዎን ይሙሉ። ክፍያ በአሁኑ ጊዜ በእጅ ይስተናገዳል — ክፍያውን ለማጠናቀቅ በቀጥታ እናገኝዎታለን።",
     field_fullname: "ሙሉ ስም",
-    field_email: "ኢሜይል",
     field_phone: "ስልክ",
+    field_package: "ጥቅል",
+    package_normal_name: "መደበኛ",
+    package_vvip_name: "ቪ.ቪ.አይ.ፒ",
     field_tickets: "ትኬት ብዛት",
     total_label: "ጠቅላላ",
     submit_button: "ትኬት ያስይዙ",
@@ -124,12 +128,12 @@ const translations = {
     form_error_required: "እባክዎ ሁሉንም መስኮች ይሙሉ።",
     form_error_network: "አገልጋዩን ማግኘት አልተቻለም — ግንኙነትዎን ያረጋግጡና እንደገና ይሞክሩ።",
     order_disclaimer:
-      "ይህ ለዋናው ዝግጅት ጥቅል ትዕዛዝዎን ያስይዛል። ክፍያ በአሁኑ ጊዜ በእጅ ይስተናገዳል — ክፍያውን አጠናቅቀው ትኬትዎን ለማረጋገጥ በቀጥታ እናገኝዎታለን።",
+      "ይህ ትዕዛዝዎን ያስይዛል። ክፍያ በአሁኑ ጊዜ በእጅ ይስተናገዳል — ክፍያውን አጠናቅቀው ትኬትዎን ለማረጋገጥ በቀጥታ እናገኝዎታለን።",
 
     success_heading: "ትዕዛዝ ደርሶናል",
     success_ref_label: "የማጣቀሻ ቁጥርዎ:",
     success_body:
-      "ይህ ቦታዎን ለዋናው ዝግጅት ጥቅል ያስይዛል። ከከፈሉ በኋላ፣ ከታች የክፍያ ስክሪንሾት ይላኩ፤ ቡድናችን ትኬትዎን ያረጋግጣል።",
+      "ይህ ቦታዎን ያስይዛል። ከከፈሉ በኋላ፣ ከታች የክፍያ ስክሪንሾት ይላኩ፤ ቡድናችን ትኬትዎን ያረጋግጣል።",
     screenshot_label: "የክፍያ ስክሪንሾት",
     screenshot_button: "ስክሪንሾት ላክ",
     screenshot_button_loading: "በመላክ ላይ…",

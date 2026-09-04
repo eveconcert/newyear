@@ -13,7 +13,10 @@
 const admin = require("./_firebaseAdmin");
 
 const db = admin.firestore();
-const TICKET_PRICE_ETB = 25000;
+
+// Prices are decided here, server-side, and never trusted from the
+// client — otherwise someone could submit a fake cheaper total.
+const PACKAGE_PRICES_ETB = { normal: 25000, vvip: 50000 };
 
 function generateReference() {
   const stamp = Date.now().toString(36).toUpperCase();
@@ -26,21 +29,25 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { fullName, email, phone, quantity } = req.body || {};
+  const { fullName, phone, quantity, ticketType } = req.body || {};
 
-  if (!fullName || !email || !phone || !quantity || quantity < 1) {
+  if (!fullName || !phone || !quantity || quantity < 1) {
     return res.status(400).json({ error: "Missing or invalid order details." });
   }
 
+  if (!PACKAGE_PRICES_ETB[ticketType]) {
+    return res.status(400).json({ error: "Invalid ticket package." });
+  }
+
   const reference = generateReference();
-  const totalEtb = TICKET_PRICE_ETB * Number(quantity);
+  const totalEtb = PACKAGE_PRICES_ETB[ticketType] * Number(quantity);
 
   try {
     await db.collection("orders").doc(reference).set({
       reference,
       fullName,
-      email,
       phone,
+      ticketType,
       quantity: Number(quantity),
       totalEtb,
       status: "pending_payment",
