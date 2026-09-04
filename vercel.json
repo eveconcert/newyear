@@ -1,11 +1,13 @@
 {
-  "cleanUrls": true,
   "rewrites": [
-    { "source": "/manage",   "destination": "/admin.html"  },
-    { "source": "/verify",   "destination": "/verify.html" }
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/verify", "destination": "/verify.html" },
+    { "source": "/manage", "destination": "/admin.html" }
   ],
   "redirects": [
-    { "source": "/admin",      "destination": "/manage", "permanent": false },
-    { "source": "/admin.html", "destination": "/manage", "permanent": false }
+    { "source": "/admin", "destination": "/manage", "permanent": false },
+    { "source": "/admin.html", "destination": "/manage", "permanent": false },
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/verify.html", "destination": "/verify", "permanent": true }
   ]
 }
