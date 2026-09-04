@@ -1,11 +1,18 @@
-// Vercel serverless function — deployed automatically at /api/checkout
-// (Vercel picks up any file in /api as its own endpoint, no framework
-// or build step required).
+// POST /api/checkout  { fullName, email, phone, quantity }
 //
-// This currently only records the order as "pending_payment" (logged
-// to the console — no database wired up). No payment is actually
-// taken here.
+// Creates the order in Firestore as "pending_payment" and hands back a
+// reference number. The reference IS the Firestore doc ID, so later steps
+// (screenshot upload, admin approve/reject) can look it up directly with
+// db.collection("orders").doc(reference) — no query needed.
+//
+// PAYMENT — still manual. No gateway wired up here (that was intentionally
+// left out for the senior dev team — see the note below). Buyer sends
+// payment manually and uploads a screenshot via /api/upload-screenshot,
+// then an admin approves/rejects it in admin.html.
 
+const admin = require("./_firebaseAdmin");
+
+const db = admin.firestore();
 const TICKET_PRICE_ETB = 25000;
 
 function generateReference() {
@@ -14,53 +21,50 @@ function generateReference() {
   return `EVE-${stamp}-${rand}`;
 }
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   const { fullName, email, phone, quantity } = req.body || {};
 
   if (!fullName || !email || !phone || !quantity || quantity < 1) {
-    res.status(400).json({ error: "Missing or invalid order details." });
-    return;
+    return res.status(400).json({ error: "Missing or invalid order details." });
   }
 
   const reference = generateReference();
-  const totalEtb = TICKET_PRICE_ETB * quantity;
+  const totalEtb = TICKET_PRICE_ETB * Number(quantity);
 
-  const order = {
-    reference,
-    fullName,
-    email,
-    phone,
-    quantity,
-    totalEtb,
-    status: "pending_payment",
-    createdAt: new Date().toISOString(),
-  };
+  try {
+    await db.collection("orders").doc(reference).set({
+      reference,
+      fullName,
+      email,
+      phone,
+      quantity: Number(quantity),
+      totalEtb,
+      status: "pending_payment",
+      screenshotUrl: null,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    return res.status(200).json({ reference });
+  } catch (err) {
+    console.error("checkout failed:", err);
+    return res.status(500).json({ error: "Could not save your order. Please try again." });
+  }
 
   // -----------------------------------------------------------------
-  // PAYMENT INTEGRATION — SantimPay
+  // PAYMENT INTEGRATION — SantimPay (still not wired up)
   //
-  // This endpoint currently only records the order as "pending_payment".
-  // No payment is actually taken here. The SantimPay gateway integration
-  // is intentionally left out of this build — that's the senior dev
-  // team's part to wire up. Suggested shape for that work:
-  //
-  //   1. Persist `order` to a real database (this stub only logs it).
-  //   2. Call the SantimPay API to create a payment session for
-  //      `order.totalEtb`, passing `order.reference` as the merchant
-  //      reference / callback identifier.
-  //   3. Return the SantimPay redirect/checkout URL to the client so
-  //      script.js can send the user there instead of showing the
-  //      "Order received" screen directly.
-  //   4. Add a webhook endpoint (e.g. /api/santimpay-webhook.js) to
-  //      receive payment confirmation and flip `order.status` to "paid".
+  // Suggested shape for that work, left for the senior dev team:
+  //   1. Call the SantimPay API to create a payment session for
+  //      `totalEtb`, passing `reference` as the merchant reference.
+  //   2. Return the SantimPay redirect/checkout URL to the client so
+  //      script.js can send the user there instead of the manual
+  //      screenshot-upload flow below.
+  //   3. Add a webhook endpoint (e.g. /api/santimpay-webhook.js) to
+  //      receive payment confirmation and flip order.status to "paid"
+  //      automatically instead of requiring manual admin approval.
   // -----------------------------------------------------------------
-
-  console.log("New ticket order (pending manual payment):", order);
-
-  res.status(200).json({ reference: order.reference });
 };

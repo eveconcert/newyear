@@ -82,12 +82,6 @@ function initModal() {
 
 const TICKET_PRICE_ETB = 25000;
 
-function generateReference() {
-  const stamp = Date.now().toString(36).toUpperCase();
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `EVE-${stamp}-${rand}`;
-}
-
 function formatEtb(amount) {
   return amount.toLocaleString() + " ETB";
 }
@@ -169,8 +163,8 @@ function initOrderForm() {
       const data = await res.json();
       finishOrder(container, data.reference, payload);
     } catch (err) {
-      // Fallback so the form still works before the API route is deployed.
-      finishOrder(container, generateReference(), payload);
+      errorEl.textContent = t("form_error_network");
+      errorEl.hidden = false;
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = t("submit_button");
@@ -179,18 +173,6 @@ function initOrderForm() {
 }
 
 function finishOrder(container, reference, payload) {
-  addOrder({
-    reference,
-    fullName: payload.fullName,
-    email: payload.email,
-    phone: payload.phone,
-    quantity: payload.quantity,
-    totalEtb: TICKET_PRICE_ETB * payload.quantity,
-    status: "pending_payment",
-    screenshot: null,
-    createdAt: new Date().toISOString(),
-  });
-
   container.innerHTML = `
     <div class="order__success">
       <h3>${t("success_heading")}</h3>
@@ -233,11 +215,14 @@ function initScreenshotUpload(reference) {
 
     try {
       const dataUrl = await compressImage(file);
-      updateOrder(reference, {
-        screenshot: dataUrl,
-        status: "pending_review",
-        screenshotUploadedAt: new Date().toISOString(),
+
+      const res = await fetch("/api/upload-screenshot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference, screenshotBase64: dataUrl }),
       });
+
+      if (!res.ok) throw new Error("Server error");
 
       uploadBox.innerHTML = `
         <p class="screenshot-done">${t("screenshot_done")}</p>

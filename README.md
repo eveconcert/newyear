@@ -11,13 +11,20 @@ can open and edit directly.
 
 ```
 index.html        the landing page + order form
-admin.html         admin panel (password-gated order review)
+admin.html         admin panel (real server-side login now)
 styles.css         shared design system
 admin.css          admin panel-specific styles
 script.js          starburst graphic + order form + screenshot upload
-admin.js            admin panel logic (approve/reject, password gate)
-storage.js          shared order storage (see note below)
-api/checkout.js    Vercel serverless function that records orders
+admin.js            admin panel logic (approve/reject, real auth)
+firestore.rules      locks Firestore to server-only access
+api/_firebaseAdmin.js     shared Firebase Admin SDK init
+api/_adminSession.js      signed admin session cookie helpers
+api/checkout.js           creates the order in Firestore
+api/upload-screenshot.js  saves the payment screenshot, flips to pending_review
+api/admin-login.js        checks password, sets session cookie
+api/admin-logout.js       clears session cookie
+api/admin-orders.js       lists all orders (admin-only)
+api/admin-order-action.js approve/reject/reset an order (admin-only)
 ```
 
 ## Language
@@ -47,39 +54,57 @@ mobile-first: full-width tap targets, a full-screen modal below
 tighter spacing on small screens. Worth testing on an actual phone
 before the presentation, not just a resized browser window.
 
-## Payment screenshots + admin approval (demo version)
+## Payment screenshots + admin approval (now backed by Firebase)
 
-For the presentation, this doesn't have a real backend yet, so orders
-and payment screenshots are stored in the browser's **local storage**
-(`storage.js`) rather than a database:
+Orders live in **Firestore** now, not localStorage — this works across
+devices: a customer submits an order and uploads a screenshot from their
+phone, and you see it immediately in `/admin.html` on your laptop.
 
-- A customer reserves tickets, then uploads a payment screenshot.
-  The order (with the screenshot) is saved in that browser's local
-  storage.
-- `/admin.html` reads from the same local storage and lets you
-  approve or reject orders that have a screenshot.
+- A customer reserves tickets → `/api/checkout` creates the order in
+  Firestore (`orders` collection, doc ID = the reference number) as
+  `pending_payment`.
+- They upload a payment screenshot → `/api/upload-screenshot` saves it
+  and flips the order to `pending_review`.
+- `/admin.html` is real now too: the password is checked **server-side**
+  in `/api/admin-login` (nothing to read in the page source), and on
+  success it sets a signed, HttpOnly session cookie — no password or
+  session token lives in the browser's JS. Approve/reject buttons call
+  `/api/admin-order-action`, which also requires that session cookie.
 
-**This only works within one browser on one device** — it's for
-demoing the flow, not for real multi-device use. The admin password
-is also just a placeholder client-side check (see the comment in
-`admin.js`), not real authentication.
+**Env vars required in Vercel** (Settings → Environment Variables):
 
-When the real backend is built (alongside the SantimPay integration
-noted in `api/checkout.js`), `storage.js` should be replaced with
-real API calls to a database, and the admin page should sit behind
-proper login.
+| Variable | Purpose |
+|---|---|
+| `FIREBASE_SERVICE_ACCOUNT_KEY` | Full service account JSON (minified to one line) — Firebase Console → Project Settings → Service Accounts → Generate new private key |
+| `ADMIN_PASSWORD` | The password for `/admin.html` |
+| `ADMIN_SESSION_SECRET` | Any long random string — signs the admin session cookie |
 
-**Default admin password:** `enkutatash2019` — change this in
-`admin.js` before sharing the link with anyone.
+Redeploy after adding/changing any of these. Never commit the service
+account JSON to the repo.
+
+**One thing still temporary:** screenshots are currently stored as a
+base64 data URL directly on the Firestore order doc (`screenshotUrl`
+field). That works and ships fine, but Firestore docs cap out at 1MB and
+there's no CDN/image optimization — the plan is to swap this for a real
+Cloudinary upload (store the returned `secure_url` instead) once that's
+wired in. Everything downstream (admin.html's `<img>` tags, the
+lightbox) already just expects a URL string, so that swap won't touch
+anything else.
+
+**Still not wired up:** a real payment gateway. See the comment block in
+`api/checkout.js` for the suggested SantimPay integration shape — that
+was intentionally left for the senior dev team.
+
 
 ## Run locally
 
 Just open `index.html` in a browser — no install, no build step.
 
-The order form will still work without the API: if `/api/checkout`
-isn't available (e.g. you're just opening the file locally), it falls
-back to generating a reference number in the browser so you can see
-the full flow.
+The order form now depends on `/api/checkout` and `/api/upload-screenshot`
+actually being live (there's no local-only fallback anymore, since orders
+have to land in Firestore for admin.html to see them). Use `vercel dev`
+to run the API functions locally, or just test against your Vercel
+deployment.
 
 ## Deploy on Vercel
 
@@ -87,9 +112,12 @@ the full flow.
    project directly).
 2. In Vercel: **New Project → Import** your repo. No framework preset
    needed — Vercel serves `index.html` as a static site and
-   automatically turns `api/checkout.js` into a live endpoint at
-   `/api/checkout`.
-3. Deploy. No environment variables required for the current build.
+   automatically turns everything in `api/` into live endpoints.
+3. Add the three environment variables listed above
+   (`FIREBASE_SERVICE_ACCOUNT_KEY`, `ADMIN_PASSWORD`,
+   `ADMIN_SESSION_SECRET`) before or right after the first deploy —
+   without them, `/api/checkout` and the admin login will fail.
+4. Deploy (or redeploy, if you added the env vars after the first one).
 
 ## Payment — currently manual
 

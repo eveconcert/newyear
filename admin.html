@@ -14,12 +14,10 @@
     <form id="password-form" class="password-gate__box">
       <h1>Admin</h1>
       <p class="password-gate__note">
-        This is a simple demo lock, not real security — anyone who reads
-        this page's source can see the password. Swap this for real
-        authentication before this ever handles live orders.
+        Enter the admin password to review ticket orders.
       </p>
       <input type="password" id="password-input" placeholder="Password" autocomplete="off" />
-      <button class="btn" type="submit">Enter</button>
+      <button class="btn" type="submit" id="password-submit">Enter</button>
       <p class="order__error" id="password-error" hidden>Wrong password.</p>
     </form>
   </div>
@@ -28,9 +26,14 @@
     <div class="wrap">
       <div class="admin-header">
         <h1>Orders</h1>
+        <div class="admin-header__actions">
+          <button class="mini-btn" id="refresh-btn" type="button">Refresh</button>
+          <button class="mini-btn" id="logout-btn" type="button">Log Out</button>
+        </div>
         <div class="admin-summary" id="admin-summary"></div>
       </div>
 
+      <p class="order__error" id="orders-error" hidden></p>
       <div id="orders-list" class="orders-list"></div>
     </div>
   </div>
@@ -39,7 +42,6 @@
     <img id="lightbox-img" src="" alt="Payment screenshot" />
   </div>
 
-  <script src="storage.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>

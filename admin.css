@@ -64,6 +64,12 @@
   margin: 0;
 }
 
+.admin-header__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .admin-summary {
   display: flex;
   gap: 10px;

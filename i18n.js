@@ -57,6 +57,7 @@ const translations = {
     submit_button: "Reserve tickets",
     submit_button_loading: "Submitting…",
     form_error_required: "Please fill in all fields.",
+    form_error_network: "Could not reach the server — check your connection and try again.",
     order_disclaimer:
       "This reserves your order for the Main Event package. Payment is handled manually for now — you'll be contacted to complete payment and confirm your ticket.",
 
@@ -121,6 +122,7 @@ const translations = {
     submit_button: "ትኬት ያስይዙ",
     submit_button_loading: "በመላክ ላይ…",
     form_error_required: "እባክዎ ሁሉንም መስኮች ይሙሉ።",
+    form_error_network: "አገልጋዩን ማግኘት አልተቻለም — ግንኙነትዎን ያረጋግጡና እንደገና ይሞክሩ።",
     order_disclaimer:
       "ይህ ለዋናው ዝግጅት ጥቅል ትዕዛዝዎን ያስይዛል። ክፍያ በአሁኑ ጊዜ በእጅ ይስተናገዳል — ክፍያውን አጠናቅቀው ትኬትዎን ለማረጋገጥ በቀጥታ እናገኝዎታለን።",
 
