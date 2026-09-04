@@ -157,7 +157,8 @@ function initOrderForm() {
       btn.disabled = qty[btn.dataset.decrease] <= 0;
     });
 
-    const totalEtb = qty.normal * PACKAGE_PRICES_ETB.normal + qty.vip * PACKAGE_PRICES_ETB.vip;
+    const totalEtb =
+      qty.normal * PACKAGE_PRICES_ETB.normal + qty.vip * PACKAGE_PRICES_ETB.vip;
     totalEl.textContent = formatEtb(totalEtb);
 
     if (total() >= MAX_TICKETS) {
@@ -346,7 +347,9 @@ function startStatusPolling(container, reference, payload) {
     }
 
     try {
-      const url = `/api/order-status?reference=${encodeURIComponent(reference)}&phone=${encodeURIComponent(payload.phone)}`;
+      const url = `/api/order-status?reference=${encodeURIComponent(
+        reference
+      )}&phone=${encodeURIComponent(payload.phone)}`;
       const res = await fetch(url);
       if (!res.ok) return; // transient network/server hiccup — just try again next tick
 
@@ -399,7 +402,15 @@ function renderTicket(container, order) {
     const qrHost = document.getElementById(`ticket-qr-${seat.seatId}`);
     if (!qrHost) return;
     try {
-      qrHost.innerHTML = makeQrSvg(seat.seatId);
+      // Encode a full verification URL so scanning opens the verify page
+      const verifyUrl = `${
+        location.origin
+      }/verify.html?ref=${encodeURIComponent(
+        order.reference
+      )}&seat=${encodeURIComponent(seat.seatId)}&phone=${encodeURIComponent(
+        order.phone
+      )}`;
+      qrHost.innerHTML = makeQrSvg(verifyUrl);
     } catch (e) {
       qrHost.textContent = seat.seatId;
     }
@@ -430,7 +441,10 @@ function buildSeatList(order) {
 }
 
 function ticketCardHtml(order, seat) {
-  const packageLabel = seat.packageType === "vip" ? t("package_vip_name") : t("package_normal_name");
+  const packageLabel =
+    seat.packageType === "vip"
+      ? t("package_vip_name")
+      : t("package_normal_name");
 
   return `
     <div class="ticket">
@@ -441,7 +455,9 @@ function ticketCardHtml(order, seat) {
       <div class="ticket__stub">
         <p class="ticket__eyebrow">${t("ticket_eyebrow")}</p>
         <h3 class="ticket__heading">${t("ticket_subheading")}</h3>
-        <span class="ticket__badge ticket__badge--${seat.packageType}">${packageLabel}</span>
+        <span class="ticket__badge ticket__badge--${
+          seat.packageType
+        }">${packageLabel}</span>
 
         <dl class="ticket__fields">
           <div>

@@ -26,7 +26,8 @@ body {
   margin: 0;
   background: var(--ink);
   color: var(--cream);
-  font-family: "Work Sans", "Noto Sans Ethiopic", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Work Sans", "Noto Sans Ethiopic", -apple-system,
+    BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -130,28 +131,40 @@ button {
   justify-content: center;
 }
 
-/* Pulsing gold glow so it draws the eye immediately. */
+/* Pulsing red glow on the hero CTA so it draws the eye immediately. */
 .hero__cta-bar .btn {
-  box-shadow: 0 0 0 0 rgba(217, 164, 65, 0.55);
+  background: #c0392b;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 16px 36px;
   animation: hero-cta-glow 2.4s ease-in-out infinite;
+}
+
+.hero__cta-bar .btn:hover {
+  background: #e74c3c;
 }
 
 @keyframes hero-cta-glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(217, 164, 65, 0.5), 0 0 10px 2px rgba(217, 164, 65, 0.35);
+    box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.5),
+      0 0 10px 2px rgba(192, 57, 43, 0.35);
   }
   50% {
-    box-shadow: 0 0 0 16px rgba(217, 164, 65, 0), 0 0 26px 8px rgba(217, 164, 65, 0.6);
+    box-shadow: 0 0 0 16px rgba(192, 57, 43, 0),
+      0 0 26px 8px rgba(192, 57, 43, 0.65);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(217, 164, 65, 0), 0 0 10px 2px rgba(217, 164, 65, 0.35);
+    box-shadow: 0 0 0 0 rgba(192, 57, 43, 0),
+      0 0 10px 2px rgba(192, 57, 43, 0.35);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero__cta-bar .btn {
     animation: none;
-    box-shadow: 0 0 14px 3px rgba(217, 164, 65, 0.45);
+    box-shadow: 0 0 14px 3px rgba(192, 57, 43, 0.5);
   }
 }
 
@@ -428,6 +441,34 @@ section {
   width: 100%;
   margin-top: 28px;
   text-align: center;
+  background: #c0392b;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 20px 28px;
+  border-radius: 4px;
+  box-shadow: 0 4px 24px rgba(192, 57, 43, 0.45);
+  animation: buy-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes buy-pulse {
+  0% {
+    box-shadow: 0 4px 24px rgba(192, 57, 43, 0.45);
+  }
+  50% {
+    box-shadow: 0 4px 40px rgba(192, 57, 43, 0.75),
+      0 0 0 8px rgba(192, 57, 43, 0.08);
+  }
+  100% {
+    box-shadow: 0 4px 24px rgba(192, 57, 43, 0.45);
+  }
+}
+
+.btn--buy:hover {
+  background: #e74c3c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(192, 57, 43, 0.6);
 }
 
 .btn--buy:disabled {
@@ -478,7 +519,12 @@ section {
   right: 0;
   height: 4px;
   border-radius: 6px 6px 0 0;
-  background: linear-gradient(90deg, var(--accent-normal), var(--gold), var(--accent-vip));
+  background: linear-gradient(
+    90deg,
+    var(--accent-normal),
+    var(--gold),
+    var(--accent-vip)
+  );
 }
 
 .modal__close {
@@ -560,7 +606,8 @@ section {
   border-left: 4px solid var(--row-accent, var(--line));
   border-radius: 4px;
   padding: 12px 14px;
-  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  transition: border-color 160ms ease, background 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .ticket-picker__row[data-package="normal"] {
@@ -791,7 +838,12 @@ section {
 }
 
 .ticket__stub {
-  background: linear-gradient(165deg, var(--navy-light), var(--navy) 60%, var(--ink-deep));
+  background: linear-gradient(
+    165deg,
+    var(--navy-light),
+    var(--navy) 60%,
+    var(--ink-deep)
+  );
   border-left: 2px dashed rgba(217, 164, 65, 0.5);
   padding: 22px 20px;
   display: flex;
