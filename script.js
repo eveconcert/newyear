@@ -303,8 +303,12 @@ function finishOrder(container, reference, payload) {
 
       <div class="screenshot-upload" id="screenshot-upload">
         <label for="screenshot-input">${t("screenshot_label")}</label>
-        <input type="file" id="screenshot-input" accept="image/*" />
-        <button class="btn btn--ghost" type="button" id="screenshot-submit">
+        <div class="screenshot-upload__drop" id="screenshot-drop" onclick="document.getElementById('screenshot-input').click()">
+          <span class="screenshot-upload__icon">📎</span>
+          <span class="screenshot-upload__text" id="screenshot-filename">Tap to attach payment screenshot</span>
+        </div>
+        <input type="file" id="screenshot-input" accept="image/*" style="display:none" />
+        <button class="btn btn--ghost" type="button" id="screenshot-submit" disabled style="opacity:0.4;cursor:not-allowed;">
           ${t("screenshot_button")}
         </button>
         <p class="order__error" id="screenshot-error" hidden></p>
@@ -320,6 +324,27 @@ function initScreenshotUpload(container, reference, payload) {
   const submitBtn = document.getElementById("screenshot-submit");
   const errorEl = document.getElementById("screenshot-error");
   const uploadBox = document.getElementById("screenshot-upload");
+  const filenameEl = document.getElementById("screenshot-filename");
+  const dropEl = document.getElementById("screenshot-drop");
+
+  // Enable submit only once a file is chosen
+  input.addEventListener("change", () => {
+    const file = input.files && input.files[0];
+    if (file) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
+      submitBtn.style.cursor = "pointer";
+      if (filenameEl) filenameEl.textContent = "✓ " + file.name;
+      if (dropEl) dropEl.classList.add("screenshot-upload__drop--chosen");
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = "0.4";
+      submitBtn.style.cursor = "not-allowed";
+      if (filenameEl)
+        filenameEl.textContent = "Tap to attach payment screenshot";
+      if (dropEl) dropEl.classList.remove("screenshot-upload__drop--chosen");
+    }
+  });
 
   submitBtn.addEventListener("click", async () => {
     errorEl.hidden = true;

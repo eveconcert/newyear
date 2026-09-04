@@ -931,6 +931,44 @@ section {
   font-size: 0.85rem;
 }
 
+.screenshot-upload__drop {
+  border: 1.5px dashed var(--line);
+  border-radius: 8px;
+  padding: 16px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  background: transparent;
+}
+
+.screenshot-upload__drop:hover {
+  border-color: var(--gold);
+  background: rgba(217, 164, 65, 0.04);
+}
+
+.screenshot-upload__drop--chosen {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.06);
+}
+
+.screenshot-upload__icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.screenshot-upload__text {
+  font-size: 0.85rem;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.screenshot-upload__drop--chosen .screenshot-upload__text {
+  color: #4caf50;
+  font-weight: 600;
+}
+
 .screenshot-done {
   margin-top: 24px;
   padding-top: 20px;
