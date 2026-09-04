@@ -123,44 +123,71 @@ function compressImage(file, maxWidth = 1000, quality = 0.7) {
 
 function initOrderForm() {
   const form = document.getElementById("order-form");
-  const quantityInput = document.getElementById("quantity");
-  const qtyDecrease = document.getElementById("qty-decrease");
-  const qtyIncrease = document.getElementById("qty-increase");
-  const packageToggle = document.getElementById("package-toggle");
+  const picker = document.getElementById("ticket-picker");
+  const hintEl = document.getElementById("ticket-picker-hint");
   const totalEl = document.getElementById("order-total");
   const errorEl = document.getElementById("order-error");
   const submitBtn = document.getElementById("order-submit");
   const container = document.getElementById("order-form-container");
 
-  let selectedPackage = "normal";
+  const qty = { normal: 1, vip: 0 };
+  const valueEls = {
+    normal: document.getElementById("qty-normal"),
+    vip: document.getElementById("qty-vip"),
+  };
+  const rowEls = {
+    normal: picker.querySelector('[data-package="normal"]'),
+    vip: picker.querySelector('[data-package="vip"]'),
+  };
 
-  function updateTotal() {
-    const qty = Number(quantityInput.value);
-    totalEl.textContent = formatEtb(PACKAGE_PRICES_ETB[selectedPackage] * qty);
+  function total() {
+    return qty.normal + qty.vip;
   }
 
-  packageToggle.querySelectorAll(".package-toggle__btn").forEach((btn) => {
+  function render() {
+    Object.keys(qty).forEach((pkg) => {
+      valueEls[pkg].textContent = qty[pkg];
+      rowEls[pkg].classList.toggle("ticket-picker__row--active", qty[pkg] > 0);
+    });
+
+    picker.querySelectorAll("[data-increase]").forEach((btn) => {
+      btn.disabled = total() >= MAX_TICKETS;
+    });
+    picker.querySelectorAll("[data-decrease]").forEach((btn) => {
+      btn.disabled = qty[btn.dataset.decrease] <= 0;
+    });
+
+    const totalEtb = qty.normal * PACKAGE_PRICES_ETB.normal + qty.vip * PACKAGE_PRICES_ETB.vip;
+    totalEl.textContent = formatEtb(totalEtb);
+
+    if (total() >= MAX_TICKETS) {
+      hintEl.textContent = t("ticket_picker_hint_limit");
+      hintEl.classList.add("ticket-picker__hint--limit");
+    } else {
+      hintEl.textContent = t("ticket_picker_hint");
+      hintEl.classList.remove("ticket-picker__hint--limit");
+    }
+  }
+
+  picker.querySelectorAll("[data-increase]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      selectedPackage = btn.dataset.package;
-      packageToggle.querySelectorAll(".package-toggle__btn").forEach((b) => {
-        const active = b === btn;
-        b.classList.toggle("package-toggle__btn--active", active);
-        b.setAttribute("aria-checked", String(active));
-      });
-      updateTotal();
+      const pkg = btn.dataset.increase;
+      if (total() >= MAX_TICKETS) return;
+      qty[pkg] += 1;
+      render();
     });
   });
 
-  function setQuantity(next) {
-    const clamped = Math.min(MAX_TICKETS, Math.max(MIN_TICKETS, next));
-    quantityInput.value = clamped;
-    updateTotal();
-  }
+  picker.querySelectorAll("[data-decrease]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const pkg = btn.dataset.decrease;
+      if (qty[pkg] <= 0) return;
+      qty[pkg] -= 1;
+      render();
+    });
+  });
 
-  qtyDecrease.addEventListener("click", () => setQuantity(Number(quantityInput.value) - 1));
-  qtyIncrease.addEventListener("click", () => setQuantity(Number(quantityInput.value) + 1));
-
-  updateTotal();
+  render();
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -169,12 +196,17 @@ function initOrderForm() {
     const payload = {
       fullName: document.getElementById("fullName").value.trim(),
       phone: document.getElementById("phone").value.trim(),
-      quantity: Number(quantityInput.value),
-      ticketType: selectedPackage,
+      tickets: { normal: qty.normal, vip: qty.vip },
     };
 
     if (!payload.fullName || !payload.phone) {
       errorEl.textContent = t("form_error_required");
+      errorEl.hidden = false;
+      return;
+    }
+
+    if (total() < MIN_TICKETS) {
+      errorEl.textContent = t("form_error_no_tickets");
       errorEl.hidden = false;
       return;
     }
@@ -352,9 +384,55 @@ function renderRejected(container, order) {
 }
 
 function renderTicket(container, order) {
-  const packageLabel = order.ticketType === "vip" ? t("package_vip_name") : t("package_normal_name");
+  const seats = buildSeatList(order);
 
   container.innerHTML = `
+    <div class="tickets-result">
+      <h3 class="tickets-result__heading">${t("tickets_ready_heading")}</h3>
+      <div class="tickets-result__list">
+        ${seats.map((seat) => ticketCardHtml(order, seat)).join("")}
+      </div>
+    </div>
+  `;
+
+  seats.forEach((seat) => {
+    const qrHost = document.getElementById(`ticket-qr-${seat.seatId}`);
+    if (!qrHost) return;
+    try {
+      qrHost.innerHTML = makeQrSvg(seat.seatId);
+    } catch (e) {
+      qrHost.textContent = seat.seatId;
+    }
+  });
+}
+
+// Every ticket TYPE bought (Normal + VIP) can be bought together in one
+// order now, and each individual ticket gets its own seat ID + QR code —
+// so a group of 5 friends can each show their own scannable ticket at
+// the door instead of passing around one shared code for the whole order.
+// `order.tickets` is the new shape ({ normal, vip }); the `quantity`/
+// `ticketType` fallback below is just so this still works against any
+// older order docs already sitting in Firestore from before this change.
+function buildSeatList(order) {
+  const tickets = order.tickets || {
+    [order.ticketType || "normal"]: order.quantity || 1,
+  };
+  const seats = [];
+
+  for (let i = 1; i <= (tickets.normal || 0); i++) {
+    seats.push({ seatId: `${order.reference}-N${i}`, packageType: "normal" });
+  }
+  for (let i = 1; i <= (tickets.vip || 0); i++) {
+    seats.push({ seatId: `${order.reference}-V${i}`, packageType: "vip" });
+  }
+
+  return seats;
+}
+
+function ticketCardHtml(order, seat) {
+  const packageLabel = seat.packageType === "vip" ? t("package_vip_name") : t("package_normal_name");
+
+  return `
     <div class="ticket">
       <div class="ticket__main">
         <img class="ticket__poster" src="images/hero-banner.jpg" alt="" />
@@ -363,7 +441,7 @@ function renderTicket(container, order) {
       <div class="ticket__stub">
         <p class="ticket__eyebrow">${t("ticket_eyebrow")}</p>
         <h3 class="ticket__heading">${t("ticket_subheading")}</h3>
-        <span class="ticket__badge ticket__badge--${order.ticketType}">${packageLabel}</span>
+        <span class="ticket__badge ticket__badge--${seat.packageType}">${packageLabel}</span>
 
         <dl class="ticket__fields">
           <div>
@@ -376,24 +454,15 @@ function renderTicket(container, order) {
           </div>
           <div>
             <dt>${t("ticket_id_label")}</dt>
-            <dd class="ticket__id">${escapeHtml(order.reference)}</dd>
+            <dd class="ticket__id">${escapeHtml(seat.seatId)}</dd>
           </div>
         </dl>
 
-        <div class="ticket__qr" id="ticket-qr"></div>
+        <div class="ticket__qr" id="ticket-qr-${seat.seatId}"></div>
         <p class="ticket__scan-label">${t("ticket_scan_label")}</p>
       </div>
     </div>
   `;
-
-  const qrHost = document.getElementById("ticket-qr");
-  if (qrHost) {
-    try {
-      qrHost.innerHTML = makeQrSvg(order.reference);
-    } catch (e) {
-      qrHost.textContent = order.reference;
-    }
-  }
 }
 
 // The vendored qrcode-generator library (vendor/qrcode.min.js, global

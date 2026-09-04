@@ -1,9 +1,15 @@
-// POST /api/checkout  { fullName, email, phone, quantity }
+// POST /api/checkout  { fullName, phone, tickets: { normal, vip } }
 //
 // Creates the order in Firestore as "pending_payment" and hands back a
 // reference number. The reference IS the Firestore doc ID, so later steps
 // (screenshot upload, admin approve/reject) can look it up directly with
 // db.collection("orders").doc(reference) — no query needed.
+//
+// A single order can now mix both ticket types (e.g. 3 Normal + 2 VIP) —
+// tickets is { normal: <int>, vip: <int> }, at least one of them > 0 and
+// the combined total capped at 6 per order. The client generates one
+// individual seat/QR per ticket once approved (see script.js), but they
+// all live under this one order doc and get approved/rejected together.
 //
 // PAYMENT — still manual. No gateway wired up here (that was intentionally
 // left out for the senior dev team — see the note below). Buyer sends
@@ -29,26 +35,36 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { fullName, phone, quantity, ticketType } = req.body || {};
+  const { fullName, phone, tickets } = req.body || {};
 
-  if (!fullName || !phone || !quantity || quantity < 1) {
+  const normalQty = Number(tickets?.normal) || 0;
+  const vipQty = Number(tickets?.vip) || 0;
+  const totalQty = normalQty + vipQty;
+
+  if (!fullName || !phone) {
     return res.status(400).json({ error: "Missing or invalid order details." });
   }
 
-  if (!PACKAGE_PRICES_ETB[ticketType]) {
-    return res.status(400).json({ error: "Invalid ticket package." });
+  if (
+    !Number.isInteger(normalQty) ||
+    !Number.isInteger(vipQty) ||
+    normalQty < 0 ||
+    vipQty < 0 ||
+    totalQty < 1 ||
+    totalQty > 6
+  ) {
+    return res.status(400).json({ error: "Choose between 1 and 6 tickets." });
   }
 
   const reference = generateReference();
-  const totalEtb = PACKAGE_PRICES_ETB[ticketType] * Number(quantity);
+  const totalEtb = normalQty * PACKAGE_PRICES_ETB.normal + vipQty * PACKAGE_PRICES_ETB.vip;
 
   try {
     await db.collection("orders").doc(reference).set({
       reference,
       fullName,
       phone,
-      ticketType,
-      quantity: Number(quantity),
+      tickets: { normal: normalQty, vip: vipQty },
       totalEtb,
       status: "pending_payment",
       screenshotUrl: null,

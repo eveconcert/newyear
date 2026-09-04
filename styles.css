@@ -9,6 +9,9 @@
   --muted: #93a4c4;
   --line: rgba(243, 236, 221, 0.14);
   --radius-stub: 6px;
+  --accent-normal: #3fc1b0;
+  --accent-normal-bright: #6adfd0;
+  --accent-vip: var(--gold-bright);
 }
 
 * {
@@ -464,6 +467,18 @@ section {
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 40px;
+  box-shadow: 0 0 0 1px rgba(217, 164, 65, 0.15), 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(90deg, var(--accent-normal), var(--gold), var(--accent-vip));
 }
 
 .modal__close {
@@ -530,49 +545,69 @@ section {
   gap: 16px;
 }
 
-.package-toggle {
+.ticket-picker {
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.package-toggle__btn {
-  display: grid;
-  gap: 4px;
+.ticket-picker__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   background: var(--navy);
   border: 1px solid var(--line);
-  color: var(--cream);
+  border-left: 4px solid var(--row-accent, var(--line));
+  border-radius: 4px;
   padding: 12px 14px;
-  border-radius: 3px;
-  font-family: inherit;
-  font-size: 0.95rem;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.ticket-picker__row[data-package="normal"] {
+  --row-accent: var(--accent-normal);
+}
+
+.ticket-picker__row[data-package="vip"] {
+  --row-accent: var(--accent-vip);
+}
+
+.ticket-picker__row--active {
+  background: rgba(243, 236, 221, 0.05);
+  box-shadow: 0 0 0 1px var(--row-accent), 0 0 14px rgba(217, 164, 65, 0.12);
+}
+
+.ticket-picker__info {
+  display: grid;
+  gap: 2px;
+}
+
+.ticket-picker__name {
   font-weight: 600;
-  text-align: left;
-  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--cream);
 }
 
-.package-toggle__btn small {
-  font-weight: 400;
-  color: var(--muted);
+.ticket-picker__row[data-package="vip"] .ticket-picker__name {
+  color: var(--accent-vip);
+}
+
+.ticket-picker__row[data-package="normal"] .ticket-picker__name {
+  color: var(--accent-normal-bright);
+}
+
+.ticket-picker__price {
   font-size: 0.8rem;
-}
-
-.package-toggle__btn--active {
-  border-color: var(--gold);
-  background: rgba(230, 178, 74, 0.08);
-}
-
-.package-toggle__btn--active small {
-  color: var(--gold);
+  color: var(--muted);
 }
 
 .stepper {
   display: grid;
-  grid-template-columns: 44px 1fr 44px;
+  grid-template-columns: 40px 1fr 40px;
   align-items: center;
   border: 1px solid var(--line);
   border-radius: 3px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .stepper__btn {
@@ -581,7 +616,7 @@ section {
   color: var(--cream);
   font-size: 1.2rem;
   line-height: 1;
-  padding: 13px 0;
+  padding: 10px 0;
   cursor: pointer;
 }
 
@@ -589,17 +624,32 @@ section {
   background: rgba(243, 236, 221, 0.06);
 }
 
-.stepper input {
+.stepper__btn:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+  background: var(--navy);
+}
+
+.stepper__value {
   text-align: center;
-  border: none;
   border-left: 1px solid var(--line);
   border-right: 1px solid var(--line);
   background: var(--navy);
   color: var(--cream);
-  padding: 13px 0;
+  padding: 10px 0;
   font-size: 0.95rem;
+  font-weight: 600;
   font-family: inherit;
-  width: 100%;
+}
+
+.ticket-picker__hint {
+  margin: 8px 2px 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.ticket-picker__hint--limit {
+  color: var(--gold-bright);
 }
 
 .order__total {
@@ -704,6 +754,18 @@ section {
   to {
     transform: rotate(360deg);
   }
+}
+
+.tickets-result__heading {
+  margin: 0 0 16px;
+  font-family: "Fraunces", "Noto Sans Ethiopic", serif;
+  font-size: 1.3rem;
+  color: var(--cream);
+}
+
+.tickets-result__list {
+  display: grid;
+  gap: 18px;
 }
 
 .ticket {

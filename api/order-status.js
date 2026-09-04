@@ -51,8 +51,7 @@ module.exports = async (req, res) => {
       status: order.status,
       fullName: order.fullName,
       phone: order.phone,
-      ticketType: order.ticketType,
-      quantity: order.quantity,
+      tickets: order.tickets || null,
       totalEtb: order.totalEtb,
     });
   } catch (err) {

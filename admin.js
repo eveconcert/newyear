@@ -164,7 +164,15 @@ function orderCardHtml(order) {
     : `<div class="order-card__thumb order-card__thumb--empty">No screenshot</div>`;
 
   const canReview = order.status === "pending_review";
-  const packageLabel = order.ticketType === "vip" ? "VIP" : "Normal";
+
+  // Older order docs (from before orders could mix ticket types) only
+  // have ticketType/quantity — fall back to that shape so they still
+  // render correctly here.
+  const tickets = order.tickets || { [order.ticketType || "normal"]: order.quantity || 0 };
+  const ticketSummary = ["normal", "vip"]
+    .filter((k) => tickets[k] > 0)
+    .map((k) => `${tickets[k]} ${k === "vip" ? "VIP" : "Normal"}`)
+    .join(" + ") || "—";
 
   const actions =
     order.status === "approved" || order.status === "rejected"
@@ -181,8 +189,8 @@ function orderCardHtml(order) {
       ${thumb}
       <div class="order-card__info">
         <span class="order-card__name">${escapeHtml(order.fullName)}</span>
-        <span class="order-card__meta">${escapeHtml(order.phone)} · ${escapeHtml(packageLabel)}</span>
-        <span class="order-card__meta">${order.quantity} ticket(s) · ${order.totalEtb.toLocaleString()} ETB</span>
+        <span class="order-card__meta">${escapeHtml(order.phone)} · ${escapeHtml(ticketSummary)}</span>
+        <span class="order-card__meta">${(order.totalEtb || 0).toLocaleString()} ETB</span>
         <span class="order-card__ref">${order.reference}</span>
       </div>
       <div class="order-card__actions">

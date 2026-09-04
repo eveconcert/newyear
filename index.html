@@ -168,26 +168,34 @@
             </div>
 
             <div class="field">
-              <label data-i18n="field_package">Package</label>
-              <div class="package-toggle" id="package-toggle" role="radiogroup">
-                <button type="button" class="package-toggle__btn package-toggle__btn--active" data-package="normal" data-price="25000" role="radio" aria-checked="true">
-                  <span data-i18n="package_normal_name">Normal</span>
-                  <small>25,000 ETB</small>
-                </button>
-                <button type="button" class="package-toggle__btn" data-package="vip" data-price="50000" role="radio" aria-checked="false">
-                  <span data-i18n="package_vip_name">VIP</span>
-                  <small>50,000 ETB</small>
-                </button>
+              <label data-i18n="field_package">Tickets</label>
+              <div class="ticket-picker" id="ticket-picker">
+                <div class="ticket-picker__row" data-package="normal">
+                  <div class="ticket-picker__info">
+                    <span class="ticket-picker__name" data-i18n="package_normal_name">Normal</span>
+                    <span class="ticket-picker__price">25,000 ETB</span>
+                  </div>
+                  <div class="stepper">
+                    <button type="button" class="stepper__btn" data-decrease="normal" aria-label="Decrease Normal tickets">&minus;</button>
+                    <span class="stepper__value" id="qty-normal">1</span>
+                    <button type="button" class="stepper__btn" data-increase="normal" aria-label="Increase Normal tickets">&plus;</button>
+                  </div>
+                </div>
+                <div class="ticket-picker__row" data-package="vip">
+                  <div class="ticket-picker__info">
+                    <span class="ticket-picker__name" data-i18n="package_vip_name">VIP</span>
+                    <span class="ticket-picker__price">50,000 ETB</span>
+                  </div>
+                  <div class="stepper">
+                    <button type="button" class="stepper__btn" data-decrease="vip" aria-label="Decrease VIP tickets">&minus;</button>
+                    <span class="stepper__value" id="qty-vip">0</span>
+                    <button type="button" class="stepper__btn" data-increase="vip" aria-label="Increase VIP tickets">&plus;</button>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div class="field" style="max-width: 160px;">
-              <label for="quantity" data-i18n="field_tickets">Tickets</label>
-              <div class="stepper" id="quantity-stepper">
-                <button type="button" class="stepper__btn" id="qty-decrease" aria-label="Decrease">&minus;</button>
-                <input type="text" id="quantity" name="quantity" value="1" readonly inputmode="numeric" aria-live="polite" />
-                <button type="button" class="stepper__btn" id="qty-increase" aria-label="Increase">&plus;</button>
-              </div>
+              <p class="ticket-picker__hint" id="ticket-picker-hint" data-i18n="ticket_picker_hint">
+                Mix and match — pick any number of each.
+              </p>
             </div>
 
             <div class="order__total">
