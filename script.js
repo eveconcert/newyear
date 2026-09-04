@@ -51,6 +51,7 @@ function initCountdown() {
 function initModal() {
   const overlay = document.getElementById("modal-overlay");
   const buyBtn = document.getElementById("buy-tickets-btn");
+  const heroBuyBtn = document.getElementById("hero-buy-btn");
   const closeBtn = document.getElementById("modal-close");
 
   function openModal() {
@@ -64,6 +65,12 @@ function initModal() {
   }
 
   buyBtn.addEventListener("click", () => {
+    if (!buyBtn.disabled) openModal();
+  });
+
+  // Hero button mirrors the in-section Buy Tickets button — same
+  // disabled state (sales-closed), same modal, no more scroll-to-form.
+  heroBuyBtn?.addEventListener("click", () => {
     if (!buyBtn.disabled) openModal();
   });
 
