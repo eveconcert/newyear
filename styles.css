@@ -102,7 +102,7 @@ button {
 /* ---------- Hero ---------- */
 
 .hero {
-  background: var(--ink-deep);
+  background: #040d2e;
   position: relative;
 }
 
@@ -110,6 +110,17 @@ button {
   display: block;
   width: 100%;
   height: auto;
+  max-height: 680px;
+  object-fit: cover;
+  object-position: center center;
+}
+
+@media (max-width: 600px) {
+  .hero__banner {
+    max-height: none;
+    object-fit: contain;
+    background: #040d2e;
+  }
 }
 
 /* Floating over the top of the hero image now, instead of sitting in
