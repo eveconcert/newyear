@@ -1,0 +1,236 @@
+.admin-body {
+  min-height: 100vh;
+}
+
+/* Password gate */
+
+.password-gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+}
+
+.password-gate__box {
+  width: min(360px, 90vw);
+  background: var(--navy);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 32px;
+  display: grid;
+  gap: 14px;
+}
+
+.password-gate__box h1 {
+  font-family: "Fraunces", serif;
+  margin: 0;
+}
+
+.password-gate__note {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.password-gate__box input {
+  background: var(--ink);
+  border: 1px solid var(--line);
+  color: var(--cream);
+  padding: 12px 14px;
+  border-radius: 3px;
+  font-size: 0.95rem;
+}
+
+/* Admin content */
+
+.admin-content {
+  min-height: 100vh;
+  padding: 56px 0;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-header h1 {
+  font-family: "Fraunces", serif;
+  margin: 0;
+}
+
+.admin-summary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.orders-list {
+  display: grid;
+  gap: 16px;
+}
+
+.order-card {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  background: var(--navy);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 18px 20px;
+}
+
+.order-card__thumb {
+  width: 90px;
+  height: 90px;
+  border-radius: 3px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--ink);
+}
+
+.order-card__thumb--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 8px;
+  cursor: default;
+}
+
+.order-card__info {
+  display: grid;
+  gap: 4px;
+}
+
+.order-card__name {
+  font-family: "Fraunces", serif;
+  font-size: 1.1rem;
+}
+
+.order-card__meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.order-card__ref {
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+}
+
+.order-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge--pending_payment {
+  background: rgba(147, 164, 196, 0.15);
+  color: var(--muted);
+}
+
+.badge--pending_review {
+  background: rgba(217, 164, 65, 0.18);
+  color: var(--gold-bright);
+}
+
+.badge--approved {
+  background: rgba(107, 191, 130, 0.18);
+  color: #7fd39a;
+}
+
+.badge--rejected {
+  background: rgba(224, 108, 108, 0.18);
+  color: #e39b9b;
+}
+
+.order-card__buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.mini-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--cream);
+  padding: 7px 14px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.mini-btn--approve {
+  border-color: #7fd39a;
+  color: #7fd39a;
+}
+
+.mini-btn--reject {
+  border-color: #e39b9b;
+  color: #e39b9b;
+}
+
+.mini-btn:hover {
+  background: rgba(243, 236, 221, 0.06);
+}
+
+.empty-state {
+  color: var(--muted);
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* Lightbox */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 13, 30, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: zoom-out;
+  z-index: 10;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .order-card {
+    grid-template-columns: 70px 1fr;
+  }
+  .order-card__actions {
+    grid-column: 1 / -1;
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Eve Concert — Enkutatash 2019 | Sheraton Addis</title>
+  <meta name="description" content="Ethiopian New Year's Eve Concert at Sheraton Addis Musical Fountain, September 10th. Featuring T.I. and Aster Aweke." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="lang-bar">
+    <div class="wrap lang-bar__inner">
+      <button class="lang-btn" id="lang-en" type="button">English</button>
+      <span class="lang-bar__sep">/</span>
+      <button class="lang-btn" id="lang-am" type="button">አማርኛ</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <img
+      class="hero__banner"
+      src="images/hero-banner.jpg"
+      alt="Ethiopian New Year's Eve Concert 2019 — Sheraton Addis Hotel and Dashen Bank present, September 10th at the Musical Fountain, Addis Ababa, 21+, featuring Aster Aweke and T.I., live performances."
+    />
+    <div class="hero__cta-bar">
+      <div class="wrap hero__cta-bar-inner">
+        <a class="btn" href="#tickets" data-i18n="hero_cta">Buy Tickets</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="venue">
+    <div class="wrap">
+      <p class="section__label" data-i18n="venue_label">The venue</p>
+      <div class="venue__grid">
+        <div class="venue__body">
+          <h2 class="section__heading" data-i18n="venue_heading">
+            An open-air New Year's Eve at the Musical Fountain
+          </h2>
+          <p data-i18n="venue_body">
+            Ring in 2019 at Sheraton Addis's Musical Fountain, with Aster Aweke
+            and T.I. sharing the stage for one night of live music, food, and
+            open bar under the stars.
+          </p>
+        </div>
+        <dl class="venue__facts">
+          <div class="fact">
+            <dt data-i18n="fact_location_label">Location</dt>
+            <dd data-i18n="fact_location_value">Sheraton Addis Hotel — Musical Fountain</dd>
+          </div>
+          <div class="fact">
+            <dt data-i18n="fact_date_label">Date</dt>
+            <dd>September 10th</dd>
+          </div>
+          <div class="fact">
+            <dt data-i18n="fact_bottle_label">Bottle service</dt>
+            <dd data-i18n="fact_bottle_value">Available at the Summerfields area</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="sponsor-row">
+        <span>Dashen Bank</span>
+        <span>Midroc Investment Group</span>
+        <span>Pepsi</span>
+        <span>NHY Import and Export</span>
+        <span>Johnnie Walker</span>
+        <span>Pristine Marketing Group</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="tickets">
+    <div class="wrap">
+      <p class="section__label" data-i18n="tickets_label">Tickets</p>
+      <h2 class="section__heading" data-i18n="tickets_heading">One package, everything included</h2>
+
+      <div class="package">
+        <div class="stub">
+          <div class="stub__top">
+            <span class="stub__name" data-i18n="package_name">Main Event</span>
+            <span class="stub__price">25,000 <small>ETB</small></span>
+          </div>
+          <ul>
+            <li data-i18n="item_1">Concert ticket</li>
+            <li data-i18n="item_2">Unlimited dining experience</li>
+            <li data-i18n="item_3">Open bar, all night long</li>
+          </ul>
+          <p class="stub__note" data-i18n="stub_note">
+            Price includes VAT and service charge. Bottle service available
+            separately at the Summerfields area. Entry is 21 and over.
+          </p>
+          <div class="restrictions">
+            <span data-i18n="restriction_1">21+</span>
+            <span data-i18n="restriction_2">No outside food or drink</span>
+            <span data-i18n="restriction_3">No weapons</span>
+          </div>
+
+          <div class="countdown" id="countdown">
+            <p class="countdown__label" data-i18n="countdown_label">Ticket sales end in</p>
+            <div class="countdown__digits">
+              <div class="countdown__unit">
+                <span id="cd-days">00</span>
+                <small data-i18n="days">Days</small>
+              </div>
+              <div class="countdown__unit">
+                <span id="cd-hours">00</span>
+                <small data-i18n="hours">Hrs</small>
+              </div>
+              <div class="countdown__unit">
+                <span id="cd-mins">00</span>
+                <small data-i18n="mins">Min</small>
+              </div>
+              <div class="countdown__unit">
+                <span id="cd-secs">00</span>
+                <small data-i18n="secs">Sec</small>
+              </div>
+            </div>
+            <p class="countdown__target" data-i18n="countdown_target">
+              Pagume 5, 12:00 PM (Addis Ababa time)
+            </p>
+          </div>
+
+          <button class="btn btn--buy" id="buy-tickets-btn" data-i18n="buy_button_active">
+            Buy Tickets
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap footer__row">
+      <span data-i18n="footer_title">Eve Concert — Enkutatash 2019</span>
+      <span data-i18n="footer_location">Sheraton Addis, Addis Ababa</span>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal__close" id="modal-close" aria-label="Close">&times;</button>
+
+      <div id="modal-body">
+        <p class="section__label" data-i18n="modal_reserve_label">Reserve</p>
+        <h2 id="modal-title" class="section__heading" data-i18n="modal_heading" style="margin-bottom: 24px;">
+          Hold your tickets
+        </h2>
+        <p class="order__disclaimer" data-i18n="modal_intro" style="margin-top: -12px; margin-bottom: 24px;">
+          Fill in your details to reserve tickets for the Main Event
+          package. Payment is currently handled manually — you'll be
+          contacted directly to complete it.
+        </p>
+
+        <div id="order-form-container">
+          <form id="order-form" novalidate>
+            <div class="field">
+              <label for="fullName" data-i18n="field_fullname">Full name</label>
+              <input id="fullName" name="fullName" type="text" required autocomplete="name" />
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="email" data-i18n="field_email">Email</label>
+                <input id="email" name="email" type="email" required autocomplete="email" />
+              </div>
+              <div class="field">
+                <label for="phone" data-i18n="field_phone">Phone</label>
+                <input id="phone" name="phone" type="tel" required autocomplete="tel" placeholder="+251 9xx xxx xxx" />
+              </div>
+            </div>
+
+            <div class="field" style="max-width: 160px;">
+              <label for="quantity" data-i18n="field_tickets">Tickets</label>
+              <select id="quantity" name="quantity">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+
+            <div class="order__total">
+              <span data-i18n="total_label">Total</span>
+              <strong id="order-total">25,000 ETB</strong>
+            </div>
+
+            <button class="btn" type="submit" id="order-submit" data-i18n="submit_button">
+              Reserve tickets
+            </button>
+
+            <p class="order__error" id="order-error" hidden></p>
+
+            <p class="order__disclaimer" data-i18n="order_disclaimer">
+              This reserves your order for the Main Event package. Payment is
+              handled manually for now — you'll be contacted to complete
+              payment and confirm your ticket.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="i18n.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

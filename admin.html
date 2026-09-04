@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Eve Concert</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin-body">
+
+  <div id="password-gate" class="password-gate">
+    <form id="password-form" class="password-gate__box">
+      <h1>Admin</h1>
+      <p class="password-gate__note">
+        This is a simple demo lock, not real security — anyone who reads
+        this page's source can see the password. Swap this for real
+        authentication before this ever handles live orders.
+      </p>
+      <input type="password" id="password-input" placeholder="Password" autocomplete="off" />
+      <button class="btn" type="submit">Enter</button>
+      <p class="order__error" id="password-error" hidden>Wrong password.</p>
+    </form>
+  </div>
+
+  <div id="admin-content" class="admin-content" hidden>
+    <div class="wrap">
+      <div class="admin-header">
+        <h1>Orders</h1>
+        <div class="admin-summary" id="admin-summary"></div>
+      </div>
+
+      <div id="orders-list" class="orders-list"></div>
+    </div>
+  </div>
+
+  <div id="lightbox" class="lightbox" hidden>
+    <img id="lightbox-img" src="" alt="Payment screenshot" />
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
