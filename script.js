@@ -288,11 +288,11 @@ function finishOrder(container, reference, payload) {
         <div class="telebirr-box__body">
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Account name</span>
-            <span class="telebirr-box__value">WEYENESHT</span>
+            <span class="telebirr-box__value">Eve Concert</span>
           </div>
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Telebirr number</span>
-            <span class="telebirr-box__value telebirr-box__value--number">0990847399</span>
+            <span class="telebirr-box__value telebirr-box__value--number">0912 345 678</span>
           </div>
           <div class="telebirr-box__amount">
             <span class="telebirr-box__amount-label">Amount to send</span>
@@ -520,9 +520,7 @@ function buildSeatList(order) {
 
 function ticketCardHtml(order, seat) {
   const packageLabel =
-    seat.packageType === "vip"
-      ? t("package_vip_name")
-      : t("package_normal_name");
+    seat.packageType === "vip" ? "VVIP" : t("package_normal_name");
 
   return `
     <div class="ticket">
