@@ -241,12 +241,40 @@ function initOrderForm() {
 }
 
 function finishOrder(container, reference, payload) {
+  // Calculate total from payload so we can show the exact amount to deposit
+  const totalEtb =
+    (payload.tickets.normal || 0) * PACKAGE_PRICES_ETB.normal +
+    (payload.tickets.vip || 0) * PACKAGE_PRICES_ETB.vip;
+
   container.innerHTML = `
     <div class="order__success">
       <h3>${t("success_heading")}</h3>
       <p>${t("success_ref_label")}</p>
       <p class="order__ref">${reference}</p>
-      <p>${t("success_body")}</p>
+
+      <div class="telebirr-box">
+        <div class="telebirr-box__header">
+          <div class="telebirr-box__logo">tele<br>birr</div>
+          <div class="telebirr-box__header-text">
+            <div class="telebirr-box__header-title">Deposit via Telebirr</div>
+            <div class="telebirr-box__header-sub">Send payment to the number below</div>
+          </div>
+        </div>
+        <div class="telebirr-box__body">
+          <div class="telebirr-box__row">
+            <span class="telebirr-box__label">Account name</span>
+            <span class="telebirr-box__value">Eve Concert</span>
+          </div>
+          <div class="telebirr-box__row">
+            <span class="telebirr-box__label">Telebirr number</span>
+            <span class="telebirr-box__value telebirr-box__value--number">0912 345 678</span>
+          </div>
+          <div class="telebirr-box__amount">
+            <span class="telebirr-box__amount-label">Amount to send</span>
+            <span class="telebirr-box__amount-value">${totalEtb.toLocaleString()} ETB</span>
+          </div>
+        </div>
+      </div>
 
       <div class="screenshot-upload" id="screenshot-upload">
         <label for="screenshot-input">${t("screenshot_label")}</label>
