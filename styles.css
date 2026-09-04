@@ -1045,7 +1045,6 @@ section {
   overflow: hidden;
   border: 1px solid var(--gold);
   background: var(--navy);
-  /* Always horizontal — never let it stack */
   min-width: 0;
 }
 
@@ -1072,7 +1071,7 @@ section {
     var(--ink-deep)
   );
   border-left: 2px dashed rgba(217, 164, 65, 0.5);
-  padding: 18px 16px;
+  padding: 22px 20px;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -1150,8 +1149,8 @@ section {
 
 .ticket__qr {
   background: var(--cream);
-  padding: 6px;
-  border-radius: 4px;
+  padding: 10px;
+  border-radius: 6px;
   line-height: 0;
   width: fit-content;
   margin-top: auto;
@@ -1159,32 +1158,53 @@ section {
 
 .ticket__qr svg {
   display: block;
-  width: 90px;
-  height: 90px;
+  width: 160px;
+  height: 160px;
 }
 
 .ticket__scan-label {
-  margin: 6px 0 0;
-  font-size: 0.65rem;
+  margin: 8px 0 0;
+  font-size: 0.68rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* Ticket always stays horizontal — shrink font on small screens instead of stacking */
-@media (max-width: 560px) {
+.ticket__save-hint {
+  margin: 14px 0 0;
+  font-size: 0.82rem;
+  color: var(--gold-bright);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.ticket__download-btn {
+  margin-top: 10px;
+}
+
+/* Below this width, the poster + stub no longer fit side by side
+   without crushing the poster into an unreadable sliver — stack them
+   instead: poster as a short banner on top, stub below. */
+@media (max-width: 640px) {
+  .ticket {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket__main {
+    min-height: 0;
+    height: 34vw;
+    max-height: 170px;
+  }
+
   .ticket__stub {
-    padding: 14px 12px;
+    border-left: none;
+    border-top: 2px dashed rgba(217, 164, 65, 0.5);
+    padding: 18px 16px;
   }
-  .ticket__heading {
-    font-size: 0.95rem;
-  }
-  .ticket__fields dd {
-    font-size: 0.82rem;
-  }
+
   .ticket__qr svg {
-    width: 72px;
-    height: 72px;
+    width: 140px;
+    height: 140px;
   }
 }
 

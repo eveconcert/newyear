@@ -5,10 +5,11 @@
 // (screenshot upload, admin approve/reject) can look it up directly with
 // db.collection("orders").doc(reference) — no query needed.
 //
-// A single order can now mix both ticket types (e.g. 3 Normal + 2 VIP) —
-// tickets is { normal: <int>, vip: <int> }, at least one of them > 0 and
-// the combined total capped at 6 per order. The client generates one
-// individual seat/QR per ticket once approved (see script.js), but they
+// A single order can mix both ticket types (e.g. 3 Normal + 2 VIP) —
+// tickets is { normal: <int>, vip: <int> }, at least one of them > 0.
+// No real upper limit for buyers; there's a generous sanity ceiling
+// server-side purely against bots/fat-fingered input, not a purchase
+// limit. The client generates one individual seat/QR per ticket once approved (see script.js), but they
 // all live under this one order doc and get approved/rejected together.
 //
 // PAYMENT — still manual. No gateway wired up here (that was intentionally
@@ -51,9 +52,9 @@ module.exports = async (req, res) => {
     normalQty < 0 ||
     vipQty < 0 ||
     totalQty < 1 ||
-    totalQty > 6
+    totalQty > 500 // sanity ceiling against bots/fat-fingers, not a real buyer limit
   ) {
-    return res.status(400).json({ error: "Choose between 1 and 6 tickets." });
+    return res.status(400).json({ error: "Choose at least 1 ticket." });
   }
 
   const reference = generateReference();

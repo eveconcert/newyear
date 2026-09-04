@@ -93,6 +93,9 @@ const translations = {
     ticket_package_label: "Package",
     ticket_qty_label: "Tickets",
     ticket_scan_label: "Scan for entry",
+    ticket_save_hint: "📸 Screenshot each ticket or tap Download to save it to your phone.",
+    ticket_download_button: "Download ticket",
+    ticket_download_loading: "Preparing…",
 
     footer_title: "Eve Concert — Enkutatash 2019",
     footer_location: "Sheraton Addis, Addis Ababa",
@@ -180,6 +183,9 @@ const translations = {
     ticket_package_label: "ጥቅል",
     ticket_qty_label: "ትኬቶች",
     ticket_scan_label: "ለመግቢያ ይቃኙ",
+    ticket_save_hint: "📸 እያንዳንዱን ትኬት ስክሪንሾት ያድርጉ ወይም Download ተጭነው ወደ ስልክዎ ያስቀምጡት።",
+    ticket_download_button: "ትኬት አውርድ",
+    ticket_download_loading: "በማዘጋጀት ላይ…",
 
     footer_title: "ኢቭ ኮንሰርት — እንቁጣጣሽ 2019",
     footer_location: "ሸራተን አዲስ፣ አዲስ አበባ",

@@ -119,13 +119,11 @@ deployment.
    without them, `/api/checkout` and the admin login will fail.
 4. Deploy (or redeploy, if you added the env vars after the first one).
 
-## Payment — currently manual
+## Payment gateway — still manual
 
-Ticket orders submitted through the form hit `api/checkout.js`, which
-records the order as `pending_payment` (logged to the console — no
-database yet) and returns a reference number to the customer.
-
-**No payment gateway is wired up.** That's intentionally left for the
-senior dev team — see the comment block in `api/checkout.js` for the
-suggested shape of the SantimPay integration (create payment session,
-redirect the user, add a webhook for confirmation).
+**No real payment gateway is wired up.** That's intentionally left for
+the senior dev team — see the comment block in `api/checkout.js` for
+the suggested shape of the SantimPay integration (create payment
+session, redirect the user, add a webhook for confirmation). Buyers
+currently pay via Telebirr manually and upload a screenshot for admin
+approval, as described above.

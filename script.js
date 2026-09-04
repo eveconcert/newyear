@@ -104,7 +104,6 @@ function initModal() {
 
 const PACKAGE_PRICES_ETB = { normal: 25000, vip: 50000 };
 const MIN_TICKETS = 1;
-const MAX_TICKETS = 6;
 
 function formatEtb(amount) {
   return amount.toLocaleString() + " ETB";
@@ -164,9 +163,6 @@ function initOrderForm() {
       rowEls[pkg].classList.toggle("ticket-picker__row--active", qty[pkg] > 0);
     });
 
-    picker.querySelectorAll("[data-increase]").forEach((btn) => {
-      btn.disabled = total() >= MAX_TICKETS;
-    });
     picker.querySelectorAll("[data-decrease]").forEach((btn) => {
       btn.disabled = qty[btn.dataset.decrease] <= 0;
     });
@@ -175,19 +171,13 @@ function initOrderForm() {
       qty.normal * PACKAGE_PRICES_ETB.normal + qty.vip * PACKAGE_PRICES_ETB.vip;
     totalEl.textContent = formatEtb(totalEtb);
 
-    if (total() >= MAX_TICKETS) {
-      hintEl.textContent = t("ticket_picker_hint_limit");
-      hintEl.classList.add("ticket-picker__hint--limit");
-    } else {
-      hintEl.textContent = t("ticket_picker_hint");
-      hintEl.classList.remove("ticket-picker__hint--limit");
-    }
+    hintEl.textContent = t("ticket_picker_hint");
+    hintEl.classList.remove("ticket-picker__hint--limit");
   }
 
   picker.querySelectorAll("[data-increase]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const pkg = btn.dataset.increase;
-      if (total() >= MAX_TICKETS) return;
       qty[pkg] += 1;
       render();
     });
@@ -470,6 +460,7 @@ function renderTicket(container, order) {
   container.innerHTML = `
     <div class="tickets-result">
       <h3 class="tickets-result__heading">${t("tickets_ready_heading")}</h3>
+      <p class="ticket__save-hint">${t("ticket_save_hint")}</p>
       <div class="tickets-result__list">
         ${seats.map((seat) => ticketCardHtml(order, seat)).join("")}
       </div>
@@ -479,20 +470,196 @@ function renderTicket(container, order) {
   seats.forEach((seat) => {
     const qrHost = document.getElementById(`ticket-qr-${seat.seatId}`);
     if (!qrHost) return;
+
+    const verifyUrl = `${location.origin}/verify?ref=${encodeURIComponent(
+      order.reference
+    )}&seat=${encodeURIComponent(seat.seatId)}&phone=${encodeURIComponent(
+      order.phone
+    )}`;
+
     try {
-      // Encode a full verification URL so scanning opens the verify page
-      const verifyUrl = `${
-        location.origin
-      }/verify.html?ref=${encodeURIComponent(
-        order.reference
-      )}&seat=${encodeURIComponent(seat.seatId)}&phone=${encodeURIComponent(
-        order.phone
-      )}`;
       qrHost.innerHTML = makeQrSvg(verifyUrl);
     } catch (e) {
       qrHost.textContent = seat.seatId;
     }
+
+    const downloadBtn = document.getElementById(`ticket-download-${seat.seatId}`);
+    downloadBtn?.addEventListener("click", async () => {
+      downloadBtn.disabled = true;
+      const originalText = downloadBtn.textContent;
+      downloadBtn.textContent = t("ticket_download_loading");
+      try {
+        await downloadTicketImage(order, seat, verifyUrl);
+      } catch (e) {
+        // If canvas rendering fails for any reason, the ticket is still
+        // fully visible on-screen — screenshotting it still works fine.
+      } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = originalText;
+      }
+    });
   });
+}
+
+// Builds a downloadable PNG of one ticket from scratch on a <canvas> —
+// deliberately not a screenshot of the DOM (which would need a whole
+// html2canvas-style library just for this one feature). It doesn't
+// pixel-match the on-screen card exactly, but carries the same info
+// and QR code, which is what actually matters at the door.
+function downloadTicketImage(order, seat, verifyUrl) {
+  return new Promise((resolve, reject) => {
+    const W = 1000;
+    const H = 600;
+    const SPLIT = 380;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d");
+
+    const packageLabel = seat.packageType === "vip" ? "VVIP" : t("package_normal_name");
+    const isVip = seat.packageType === "vip";
+
+    const poster = new Image();
+    poster.crossOrigin = "anonymous";
+
+    poster.onload = () => {
+      try {
+        // Left panel: poster image, cropped to cover
+        const scale = Math.max(SPLIT / poster.width, H / poster.height);
+        const pw = poster.width * scale;
+        const ph = poster.height * scale;
+        ctx.drawImage(poster, (SPLIT - pw) / 2, (H - ph) / 2, pw, ph);
+
+        // Right panel: navy gradient
+        const grad = ctx.createLinearGradient(SPLIT, 0, W, H);
+        grad.addColorStop(0, "#1a3363");
+        grad.addColorStop(0.6, "#10254a");
+        grad.addColorStop(1, "#060d1e");
+        ctx.fillStyle = grad;
+        ctx.fillRect(SPLIT, 0, W - SPLIT, H);
+
+        // Dashed divider
+        ctx.strokeStyle = "rgba(217, 164, 65, 0.5)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(SPLIT, 0);
+        ctx.lineTo(SPLIT, H);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const padX = SPLIT + 36;
+        let y = 56;
+
+        ctx.fillStyle = "#d9a441";
+        ctx.font = "700 15px 'Work Sans', Arial";
+        ctx.fillText(t("ticket_eyebrow").toUpperCase(), padX, y);
+
+        y += 32;
+        ctx.fillStyle = "#f3ecdd";
+        ctx.font = "600 26px Georgia, serif";
+        ctx.fillText(t("ticket_subheading"), padX, y);
+
+        // Badge
+        y += 34;
+        ctx.font = "700 13px 'Work Sans', Arial";
+        const badgeText = packageLabel;
+        const badgeW = ctx.measureText(badgeText).width + 28;
+        ctx.fillStyle = isVip ? "rgba(217, 164, 65, 0.2)" : "rgba(147, 164, 196, 0.16)";
+        roundRect(ctx, padX, y - 18, badgeW, 28, 14);
+        ctx.fill();
+        if (isVip) {
+          ctx.strokeStyle = "#d9a441";
+          ctx.lineWidth = 1;
+          roundRect(ctx, padX, y - 18, badgeW, 28, 14);
+          ctx.stroke();
+        }
+        ctx.fillStyle = isVip ? "#f0c36b" : "#f3ecdd";
+        ctx.fillText(badgeText, padX + 14, y);
+
+        // Divider
+        y += 26;
+        ctx.strokeStyle = "rgba(243, 236, 221, 0.2)";
+        ctx.setLineDash([2, 3]);
+        ctx.beginPath();
+        ctx.moveTo(padX, y);
+        ctx.lineTo(W - 36, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Fields
+        const fields = [
+          [t("ticket_name_label"), order.fullName],
+          [t("ticket_phone_label"), order.phone],
+          [t("ticket_id_label"), seat.seatId],
+        ];
+        y += 30;
+        fields.forEach(([label, value]) => {
+          ctx.fillStyle = "#d9a441";
+          ctx.font = "700 11px 'Work Sans', Arial";
+          ctx.fillText(label.toUpperCase(), padX, y);
+          y += 20;
+          ctx.fillStyle = "#f3ecdd";
+          ctx.font = "500 18px 'Work Sans', Arial";
+          ctx.fillText(String(value), padX, y);
+          y += 26;
+        });
+
+        // QR
+        const qrSvg = makeQrSvg(verifyUrl);
+        const qrImg = new Image();
+        const qrSize = 170;
+        const qrX = padX;
+        const qrY = H - qrSize - 60;
+
+        qrImg.onload = () => {
+          ctx.fillStyle = "#f3ecdd";
+          roundRect(ctx, qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 6);
+          ctx.fill();
+          ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+          ctx.fillStyle = "#93a4c4";
+          ctx.font = "600 11px 'Work Sans', Arial";
+          ctx.fillText(t("ticket_scan_label").toUpperCase(), qrX, qrY + qrSize + 26);
+
+          finish();
+        };
+        qrImg.onerror = finish; // still download the card even if the QR image fails
+        qrImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(qrSvg);
+
+        function finish() {
+          canvas.toBlob((blob) => {
+            if (!blob) return reject(new Error("toBlob failed"));
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `ticket-${seat.seatId}.png`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            resolve();
+          }, "image/png");
+        }
+      } catch (e) {
+        reject(e);
+      }
+    };
+
+    poster.onerror = () => reject(new Error("Could not load poster image"));
+    poster.src = "images/hero-banner.jpg";
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
 
 // Every ticket TYPE bought (Normal + VIP) can be bought together in one
@@ -552,6 +719,9 @@ function ticketCardHtml(order, seat) {
 
         <div class="ticket__qr" id="ticket-qr-${seat.seatId}"></div>
         <p class="ticket__scan-label">${t("ticket_scan_label")}</p>
+        <button class="btn btn--ghost ticket__download-btn" type="button" id="ticket-download-${seat.seatId}">
+          ${t("ticket_download_button")}
+        </button>
       </div>
     </div>
   `;
