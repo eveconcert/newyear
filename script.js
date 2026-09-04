@@ -18,12 +18,20 @@ function initCountdown() {
     return String(n).padStart(2, "0");
   }
 
+  // Hero bar countdown elements
+  const heroCd = document.getElementById("hero-countdown");
+  const hcdDays = document.getElementById("hcd-days");
+  const hcdHours = document.getElementById("hcd-hours");
+  const hcdMins = document.getElementById("hcd-mins");
+  const hcdSecs = document.getElementById("hcd-secs");
+
   function tick() {
     const diff = SALE_END.getTime() - Date.now();
 
     if (diff <= 0) {
       clearInterval(timer);
       wrap.hidden = true;
+      if (heroCd) heroCd.hidden = true;
       buyBtn.disabled = true;
       buyBtn.setAttribute("data-i18n", "buy_button_ended");
       buyBtn.textContent = t("buy_button_ended");
@@ -40,6 +48,12 @@ function initCountdown() {
     hoursEl.textContent = pad(hours);
     minsEl.textContent = pad(mins);
     secsEl.textContent = pad(secs);
+
+    // Mirror to hero bar
+    if (hcdDays) hcdDays.textContent = pad(days);
+    if (hcdHours) hcdHours.textContent = pad(hours);
+    if (hcdMins) hcdMins.textContent = pad(mins);
+    if (hcdSecs) hcdSecs.textContent = pad(secs);
   }
 
   tick();

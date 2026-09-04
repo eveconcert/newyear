@@ -128,7 +128,64 @@ button {
 
 .hero__cta-bar-inner {
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero__countdown {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+
+.hero__cd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 32px;
+}
+
+.hero__cd-unit span {
+  font-family: "Fraunces", serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.hero__cd-unit small {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+}
+
+.hero__cd-sep {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 10px;
+}
+
+@media (max-width: 480px) {
+  .hero__countdown {
+    padding: 6px 10px;
+    gap: 4px;
+  }
+  .hero__cd-unit span {
+    font-size: 1rem;
+  }
+  .hero__cd-unit {
+    min-width: 24px;
+  }
 }
 
 /* Pulsing red glow on the hero CTA so it draws the eye immediately. */
