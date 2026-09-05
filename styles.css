@@ -136,10 +136,13 @@ button {
 
 @media (max-width: 600px) {
   .hero__banner {
+    /* Landscape poster on mobile — show it full width, natural height,
+       no cropping. The CTA bar moves below the image (see below). */
     max-height: none;
-    object-fit: contain;
-    object-position: center top;
-    background: #0a1a5c;
+    height: auto;
+    object-fit: fill;
+    object-position: unset;
+    background: #040d2e;
   }
 }
 
@@ -157,12 +160,41 @@ button {
   padding: 32px 0 20px;
 }
 
+@media (max-width: 600px) {
+  .hero__cta-bar {
+    /* Don't overlay the image on mobile — sit in flow below it */
+    position: static;
+    background: var(--ink-deep);
+    padding: 20px 16px 24px;
+  }
+}
+
 .hero__cta-bar-inner {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .hero__cta-bar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .hero__cta-bar .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    padding: 18px 24px;
+  }
+
+  .hero__countdown {
+    justify-content: center;
+  }
 }
 
 .hero__countdown {
@@ -1377,8 +1409,8 @@ footer {
 }
 
 .lineup__card {
-  flex: 0 0 72vw;                 /* wide enough to read, narrow enough to peek */
-  max-width: 320px;
+  flex: 0 0 78vw;                 /* wide enough to read, narrow enough to peek */
+  max-width: 300px;
   scroll-snap-align: start;
   border-radius: 12px;
   overflow: hidden;
