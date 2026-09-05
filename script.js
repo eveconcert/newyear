@@ -278,7 +278,7 @@ function finishOrder(container, reference, payload) {
         <div class="telebirr-box__body">
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Account name</span>
-            <span class="telebirr-box__value">ASRES</span>
+            <span class="telebirr-box__value">Ayechew</span>
           </div>
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Telebirr number</span>
