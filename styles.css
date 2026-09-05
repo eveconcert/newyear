@@ -38,7 +38,7 @@ body::before {
   position: fixed;
   inset: 0;
   background-color: var(--ink);
-  opacity: 0.91;
+  opacity: 0.72;
   z-index: 0;
   pointer-events: none;
 }
@@ -83,7 +83,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 15;
-  background: rgba(6, 13, 30, 0.75);
+  background: rgba(6, 13, 30, 0.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
@@ -347,7 +347,7 @@ section {
 /* ---------- Venue ---------- */
 
 .venue {
-  background: var(--navy);
+  background: rgba(16, 37, 74, 0.82);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -1388,8 +1388,13 @@ footer {
 
 /* ── Lineup / artist section ─────────────────────────────────────── */
 .lineup {
-  background: var(--ink-deep);
+  background: rgba(6, 13, 30, 0.78);
   padding: 56px 0 64px;
+}
+
+/* ── Tickets section ──────────────────────────────────────────────── */
+#tickets {
+  background: rgba(16, 37, 74, 0.75);
 }
 
 .lineup__head {
