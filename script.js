@@ -278,11 +278,11 @@ function finishOrder(container, reference, payload) {
         <div class="telebirr-box__body">
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Account name</span>
-            <span class="telebirr-box__value">Weyenesht</span>
+            <span class="telebirr-box__value">ASRES</span>
           </div>
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Telebirr number</span>
-            <span class="telebirr-box__value telebirr-box__value--number">0990847399</span>
+            <span class="telebirr-box__value telebirr-box__value--number">0947558069</span>
           </div>
           <div class="telebirr-box__amount">
             <span class="telebirr-box__amount-label">Amount to send</span>
@@ -483,7 +483,9 @@ function renderTicket(container, order) {
       qrHost.textContent = seat.seatId;
     }
 
-    const downloadBtn = document.getElementById(`ticket-download-${seat.seatId}`);
+    const downloadBtn = document.getElementById(
+      `ticket-download-${seat.seatId}`
+    );
     downloadBtn?.addEventListener("click", async () => {
       downloadBtn.disabled = true;
       const originalText = downloadBtn.textContent;
@@ -517,7 +519,8 @@ function downloadTicketImage(order, seat, verifyUrl) {
     canvas.height = H;
     const ctx = canvas.getContext("2d");
 
-    const packageLabel = seat.packageType === "vip" ? "VVIP" : t("package_normal_name");
+    const packageLabel =
+      seat.packageType === "vip" ? "VVIP" : t("package_normal_name");
     const isVip = seat.packageType === "vip";
 
     const poster = new Image();
@@ -570,7 +573,9 @@ function downloadTicketImage(order, seat, verifyUrl) {
         ctx.font = "700 13px 'Work Sans', Arial";
         const badgeText = packageLabel;
         const badgeW = ctx.measureText(badgeText).width + 28;
-        ctx.fillStyle = isVip ? "rgba(217, 164, 65, 0.2)" : "rgba(147, 164, 196, 0.16)";
+        ctx.fillStyle = isVip
+          ? "rgba(217, 164, 65, 0.2)"
+          : "rgba(147, 164, 196, 0.16)";
         roundRect(ctx, padX, y - 18, badgeW, 28, 14);
         ctx.fill();
         if (isVip) {
@@ -625,12 +630,17 @@ function downloadTicketImage(order, seat, verifyUrl) {
 
           ctx.fillStyle = "#93a4c4";
           ctx.font = "600 11px 'Work Sans', Arial";
-          ctx.fillText(t("ticket_scan_label").toUpperCase(), qrX, qrY + qrSize + 26);
+          ctx.fillText(
+            t("ticket_scan_label").toUpperCase(),
+            qrX,
+            qrY + qrSize + 26
+          );
 
           finish();
         };
         qrImg.onerror = finish; // still download the card even if the QR image fails
-        qrImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(qrSvg);
+        qrImg.src =
+          "data:image/svg+xml;charset=utf-8," + encodeURIComponent(qrSvg);
 
         function finish() {
           canvas.toBlob((blob) => {
@@ -723,7 +733,9 @@ function ticketCardHtml(order, seat) {
 
         <div class="ticket__qr" id="ticket-qr-${seat.seatId}"></div>
         <p class="ticket__scan-label">${t("ticket_scan_label")}</p>
-        <button class="btn btn--ghost ticket__download-btn" type="button" id="ticket-download-${seat.seatId}">
+        <button class="btn btn--ghost ticket__download-btn" type="button" id="ticket-download-${
+          seat.seatId
+        }">
           ${t("ticket_download_button")}
         </button>
       </div>

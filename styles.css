@@ -1328,3 +1328,60 @@ footer {
     font-size: 16px; /* prevents iOS auto-zoom on focus */
   }
 }
+
+/* ── Lineup / artist section ─────────────────────────────────────── */
+.lineup {
+  background: var(--ink-deep);
+  padding: 72px 0 80px;
+}
+
+.lineup__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.lineup__card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--navy);
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lineup__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+.lineup__img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 9/16;
+  object-fit: cover;
+  object-position: top;
+}
+
+.lineup__caption {
+  padding: 14px 16px;
+  font-family: "Fraunces", serif;
+  font-size: 1.05rem;
+  color: var(--gold-bright);
+  text-align: center;
+  letter-spacing: 0.01em;
+  background: var(--navy);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+@media (max-width: 640px) {
+  .lineup__grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .lineup__img {
+    aspect-ratio: 3/4;
+  }
+}
