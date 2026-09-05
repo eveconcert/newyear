@@ -104,6 +104,8 @@ button {
 .hero {
   background: #040d2e;
   position: relative;
+  /* Extra bottom space so the CTA gradient overlay doesn't eat faces */
+  padding-bottom: 0;
 }
 
 .hero__banner {
@@ -128,13 +130,17 @@ button {
    scrolling needed. */
 .hero__cta-bar {
   position: absolute;
-  top: 18px;
+  bottom: 0;
   left: 0;
   right: 0;
   z-index: 5;
-  background: none;
+  background: linear-gradient(
+    to top,
+    rgba(4, 13, 46, 0.92) 0%,
+    rgba(4, 13, 46, 0) 100%
+  );
   border: none;
-  padding: 0;
+  padding: 32px 0 20px;
 }
 
 .hero__cta-bar-inner {
@@ -1332,21 +1338,37 @@ footer {
 /* ── Lineup / artist section ─────────────────────────────────────── */
 .lineup {
   background: var(--ink-deep);
-  padding: 72px 0 80px;
+  padding: 56px 0 64px;
 }
 
-.lineup__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 40px;
+.lineup__head {
+  margin-bottom: 28px;
+}
+
+/* Horizontal scroll track — no wrap, cards peek at the right edge
+   so people know there's more to swipe through */
+.lineup__scroll-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  padding: 0 24px 20px; /* side padding so first card isn't flush */
+  /* peek: cards are narrower than viewport so the next one shows */
+}
+
+.lineup__scroll-track::-webkit-scrollbar {
+  display: none;
 }
 
 .lineup__card {
+  flex: 0 0 72vw; /* wide enough to read, narrow enough to peek */
+  max-width: 320px;
+  scroll-snap-align: start;
   border-radius: 12px;
   overflow: hidden;
   background: var(--navy);
-  position: relative;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1375,13 +1397,21 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-@media (max-width: 640px) {
-  .lineup__grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+/* On desktop: show all three side by side, no scroll needed */
+@media (min-width: 900px) {
+  .lineup__scroll-track {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    overflow-x: visible;
+    padding: 0 0 0 0;
+    max-width: var(--wrap);
+    margin: 0 auto;
+    padding: 0 24px;
   }
 
-  .lineup__img {
-    aspect-ratio: 3/4;
+  .lineup__card {
+    flex: unset;
+    max-width: unset;
   }
 }
