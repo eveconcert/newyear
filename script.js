@@ -278,11 +278,11 @@ function finishOrder(container, reference, payload) {
         <div class="telebirr-box__body">
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Account name</span>
-            <span class="telebirr-box__value">Eve Concert</span>
+            <span class="telebirr-box__value">Weyenesht</span>
           </div>
           <div class="telebirr-box__row">
             <span class="telebirr-box__label">Telebirr number</span>
-            <span class="telebirr-box__value telebirr-box__value--number">0912 345 678</span>
+            <span class="telebirr-box__value telebirr-box__value--number">0990847399</span>
           </div>
           <div class="telebirr-box__amount">
             <span class="telebirr-box__amount-label">Amount to send</span>
@@ -525,11 +525,15 @@ function downloadTicketImage(order, seat, verifyUrl) {
 
     poster.onload = () => {
       try {
-        // Left panel: poster image, cropped to cover
+        // Left panel: poster image, cropped to cover (matches the
+        // on-screen crop: object-position 8% 12%, biased toward
+        // Aster Aweke's face rather than a plain center crop)
         const scale = Math.max(SPLIT / poster.width, H / poster.height);
         const pw = poster.width * scale;
         const ph = poster.height * scale;
-        ctx.drawImage(poster, (SPLIT - pw) / 2, (H - ph) / 2, pw, ph);
+        const px = (SPLIT - pw) * 0.08;
+        const py = (H - ph) * 0.12;
+        ctx.drawImage(poster, px, py, pw, ph);
 
         // Right panel: navy gradient
         const grad = ctx.createLinearGradient(SPLIT, 0, W, H);
