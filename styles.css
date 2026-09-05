@@ -112,16 +112,17 @@ button {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 680px;
+  max-height: 780px;
   object-fit: cover;
-  object-position: center center;
+  object-position: center 20%;
 }
 
 @media (max-width: 600px) {
   .hero__banner {
     max-height: none;
     object-fit: contain;
-    background: #040d2e;
+    object-position: center top;
+    background: #0a1a5c;
   }
 }
 
