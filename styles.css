@@ -83,7 +83,9 @@ button {
   position: sticky;
   top: 0;
   z-index: 15;
-  background: var(--ink-deep);
+  background: rgba(6, 13, 30, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
   padding-top: env(safe-area-inset-top, 0);
 }
@@ -119,9 +121,8 @@ button {
 /* ---------- Hero ---------- */
 
 .hero {
-  background: #040d2e;
+  background: transparent;
   position: relative;
-  /* Extra bottom space so the CTA gradient overlay doesn't eat faces */
   padding-bottom: 0;
 }
 
@@ -142,7 +143,7 @@ button {
     height: auto;
     object-fit: fill;
     object-position: unset;
-    background: #040d2e;
+    background: transparent;
   }
 }
 
