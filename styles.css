@@ -24,12 +24,29 @@ html {
 
 body {
   margin: 0;
-  background: var(--ink);
+  background-color: var(--ink);
+  background-image: url("images/meskel-bg.png");
+  background-repeat: repeat;
+  background-size: 600px auto;
+  background-attachment: fixed;
   color: var(--cream);
-  font-family: "Work Sans", "Noto Sans Ethiopic", -apple-system,
-    BlinkMacSystemFont, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  position: relative;
 }
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: var(--ink);
+  opacity: 0.91;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -135,11 +152,7 @@ button {
   left: 0;
   right: 0;
   z-index: 5;
-  background: linear-gradient(
-    to top,
-    rgba(4, 13, 46, 0.92) 0%,
-    rgba(4, 13, 46, 0) 100%
-  );
+  background: linear-gradient(to top, rgba(4,13,46,0.92) 0%, rgba(4,13,46,0.0) 100%);
   border: none;
   padding: 32px 0 20px;
 }
@@ -1354,8 +1367,8 @@ footer {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  padding: 0 24px 20px; /* side padding so first card isn't flush */
+  scrollbar-width: none;          /* Firefox */
+  padding: 0 24px 20px;           /* side padding so first card isn't flush */
   /* peek: cards are narrower than viewport so the next one shows */
 }
 
@@ -1364,19 +1377,19 @@ footer {
 }
 
 .lineup__card {
-  flex: 0 0 72vw; /* wide enough to read, narrow enough to peek */
+  flex: 0 0 72vw;                 /* wide enough to read, narrow enough to peek */
   max-width: 320px;
   scroll-snap-align: start;
   border-radius: 12px;
   overflow: hidden;
   background: var(--navy);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .lineup__card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.55);
 }
 
 .lineup__img {
@@ -1389,13 +1402,13 @@ footer {
 
 .lineup__caption {
   padding: 14px 16px;
-  font-family: "Fraunces", serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.05rem;
   color: var(--gold-bright);
   text-align: center;
   letter-spacing: 0.01em;
   background: var(--navy);
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 1px solid rgba(255,255,255,0.07);
 }
 
 /* On desktop: show all three side by side, no scroll needed */
