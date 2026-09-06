@@ -916,43 +916,10 @@ section {
 }
 
 .order__success {
-  position: relative;
-  border: 1.5px solid rgba(217, 164, 65, 0.5);
-  background: rgba(4, 10, 24, 0.75);
-  padding: 28px 22px 22px;
-  border-radius: 16px;
-  overflow: visible;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 0 0 1px rgba(217, 164, 65, 0.1), 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-/* Sunflower corner decorations using the modal bg image cropped to corners */
-.order__success::before,
-.order__success::after {
-  content: "";
-  position: absolute;
-  width: 90px;
-  height: 90px;
-  background-image: url("images/modal-bg.png");
-  background-size: 320px auto;
-  pointer-events: none;
-  z-index: 2;
+  border: 1px solid var(--gold);
+  background: rgba(217, 164, 65, 0.08);
+  padding: 28px;
   border-radius: 4px;
-}
-
-/* Top-right corner — shows the sunflower from top-right of the image */
-.order__success::before {
-  top: -18px;
-  right: -18px;
-  background-position: top right;
-}
-
-/* Bottom-left corner — shows the sunflower from bottom-left of the image */
-.order__success::after {
-  bottom: -18px;
-  left: -18px;
-  background-position: bottom left;
 }
 
 .order__success h3 {
@@ -1112,21 +1079,21 @@ section {
 
 /* Upload drop zone — gold-bordered, warm tint, clearly tappable */
 .screenshot-upload__drop {
-  border: 2px dashed var(--gold-bright);
+  border: none;
   border-radius: 12px;
-  padding: 18px 16px;
+  padding: 20px 18px;
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-  background: rgba(217, 164, 65, 0.12);
+  transition: opacity 0.15s;
+  background: linear-gradient(135deg, #e8420a 0%, #f07020 100%);
+  box-shadow: 0 4px 16px rgba(232, 66, 10, 0.45);
 }
 
 .screenshot-upload__drop:hover,
 .screenshot-upload__drop:active {
-  border-color: #fff;
-  background: rgba(217, 164, 65, 0.22);
+  opacity: 0.88;
 }
 
 .screenshot-upload__drop--chosen {
@@ -1142,8 +1109,9 @@ section {
 .screenshot-upload__text {
   font-size: 1rem;
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
   word-break: break-word;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .screenshot-upload__drop--chosen .screenshot-upload__text {
@@ -1151,16 +1119,16 @@ section {
   font-weight: 600;
 }
 
-/* Submit / Upload screenshot button — full gold like the reference */
+/* Upload screenshot button — bright gold, impossible to miss */
 #screenshot-submit {
   width: 100%;
-  padding: 18px 24px;
-  border-radius: 10px;
+  padding: 20px 24px;
+  border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #d9a441 0%, #f0c36b 100%);
-  color: var(--ink-deep);
-  font-size: 1.05rem;
-  font-weight: 700;
+  background: linear-gradient(135deg, #d9a441 0%, #f5c842 100%);
+  color: #1a0a00;
+  font-size: 1.1rem;
+  font-weight: 800;
   letter-spacing: 0.03em;
   cursor: pointer;
   display: flex;
@@ -1168,7 +1136,7 @@ section {
   justify-content: center;
   gap: 10px;
   transition: opacity 0.2s, transform 0.15s;
-  box-shadow: 0 4px 20px rgba(217, 164, 65, 0.35);
+  box-shadow: 0 4px 24px rgba(217, 164, 65, 0.55);
 }
 
 #screenshot-submit:not(:disabled):hover {
@@ -1177,7 +1145,9 @@ section {
 }
 
 #screenshot-submit:disabled {
-  opacity: 0.35;
+  background: rgba(180, 140, 60, 0.3);
+  color: rgba(255, 255, 255, 0.35);
+  box-shadow: none;
   cursor: not-allowed;
   transform: none;
 }
