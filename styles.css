@@ -976,7 +976,8 @@ section {
   font-weight: 700;
   font-size: 0.95rem;
   color: #1a1a1a;
-  white-space: nowrap;
+  text-align: right;
+  word-break: break-word;
 }
 
 .telebirr-box__value--number {
