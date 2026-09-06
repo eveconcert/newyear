@@ -954,6 +954,8 @@ section {
   border-radius: 10px;
   overflow: hidden;
   border: 1.5px solid #e8420a;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .telebirr-box__header {
@@ -1512,5 +1514,27 @@ footer {
   .lineup__card {
     flex: unset;
     max-width: unset;
+  }
+}
+
+/* ── Mobile modal: ensure nothing overflows the screen ──────────── */
+@media (max-width: 600px) {
+  #modal-body .field input,
+  #modal-body .field select,
+  #modal-body .ticket-picker,
+  #modal-body .telebirr-box,
+  #modal-body .order__total,
+  #modal-body .screenshot-upload {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .telebirr-box__body {
+    padding: 12px 14px;
+  }
+
+  .telebirr-box__value--number {
+    font-size: 1.1rem;
+    word-break: break-all;
   }
 }
