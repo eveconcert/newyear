@@ -651,12 +651,9 @@ section {
 .modal::before {
   content: "";
   position: absolute;
-  inset: 18% 12% 18% 12%; /* leaves the flower frame visible around edges */
-  background: rgba(4, 10, 24, 0.82);
-  border-radius: 18px;
-  border: 1px solid rgba(217, 164, 65, 0.25);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  inset: 0;
+  background: rgba(4, 10, 24, 0.78);
+  border-radius: 0;
   pointer-events: none;
   z-index: 0;
 }
@@ -667,10 +664,10 @@ section {
   z-index: 1;
 }
 
-/* Scrollable content area inset to match the frosted panel */
+/* Scrollable content — padding keeps it away from edges */
 #modal-body {
-  margin: 18% 12%;
-  padding: 28px 24px 40px;
+  margin: 0;
+  padding: 56px 28px 48px;
 }
 
 .modal__close {
@@ -708,12 +705,13 @@ section {
   }
 
   .modal::before {
-    inset: 100px 60px 80px 60px;
+    inset: 0;
+    border-radius: 20px;
   }
 
   #modal-body {
     margin: 0;
-    padding: 100px 80px 80px;
+    padding: 56px 48px 56px;
   }
 }
 
