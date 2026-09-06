@@ -916,10 +916,43 @@ section {
 }
 
 .order__success {
-  border: 1px solid var(--gold);
-  background: rgba(217, 164, 65, 0.08);
-  padding: 28px;
+  position: relative;
+  border: 1.5px solid rgba(217, 164, 65, 0.5);
+  background: rgba(4, 10, 24, 0.75);
+  padding: 28px 22px 22px;
+  border-radius: 16px;
+  overflow: visible;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 0 0 1px rgba(217, 164, 65, 0.1), 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Sunflower corner decorations using the modal bg image cropped to corners */
+.order__success::before,
+.order__success::after {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  background-image: url("images/modal-bg.png");
+  background-size: 320px auto;
+  pointer-events: none;
+  z-index: 2;
   border-radius: 4px;
+}
+
+/* Top-right corner — shows the sunflower from top-right of the image */
+.order__success::before {
+  top: -18px;
+  right: -18px;
+  background-position: top right;
+}
+
+/* Bottom-left corner — shows the sunflower from bottom-left of the image */
+.order__success::after {
+  bottom: -18px;
+  left: -18px;
+  background-position: bottom left;
 }
 
 .order__success h3 {
@@ -1079,7 +1112,7 @@ section {
 
 /* Upload drop zone — gold-bordered, warm tint, clearly tappable */
 .screenshot-upload__drop {
-  border: 1.5px dashed var(--gold);
+  border: 2px dashed var(--gold-bright);
   border-radius: 12px;
   padding: 18px 16px;
   display: flex;
@@ -1087,13 +1120,13 @@ section {
   gap: 12px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
-  background: rgba(217, 164, 65, 0.07);
+  background: rgba(217, 164, 65, 0.12);
 }
 
 .screenshot-upload__drop:hover,
 .screenshot-upload__drop:active {
-  border-color: var(--gold-bright);
-  background: rgba(217, 164, 65, 0.14);
+  border-color: #fff;
+  background: rgba(217, 164, 65, 0.22);
 }
 
 .screenshot-upload__drop--chosen {
@@ -1107,9 +1140,9 @@ section {
 }
 
 .screenshot-upload__text {
-  font-size: 0.95rem;
-  color: var(--gold-bright);
-  font-weight: 500;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 600;
   word-break: break-word;
 }
 
