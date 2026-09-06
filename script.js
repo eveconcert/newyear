@@ -157,6 +157,8 @@ function initOrderForm() {
     return qty.normal + qty.vip;
   }
 
+  const VIP_SEATS_LEFT = 16;
+
   function render() {
     Object.keys(qty).forEach((pkg) => {
       valueEls[pkg].textContent = qty[pkg];
@@ -167,17 +169,26 @@ function initOrderForm() {
       btn.disabled = qty[btn.dataset.decrease] <= 0;
     });
 
+    const vipIncBtn = picker.querySelector('[data-increase="vip"]');
+    if (vipIncBtn) vipIncBtn.disabled = qty.vip >= VIP_SEATS_LEFT;
+
     const totalEtb =
       qty.normal * PACKAGE_PRICES_ETB.normal + qty.vip * PACKAGE_PRICES_ETB.vip;
     totalEl.textContent = formatEtb(totalEtb);
 
-    hintEl.textContent = t("ticket_picker_hint");
-    hintEl.classList.remove("ticket-picker__hint--limit");
+    if (qty.vip >= VIP_SEATS_LEFT) {
+      hintEl.textContent = `Only ${VIP_SEATS_LEFT} VVIP seats available — limit reached.`;
+      hintEl.classList.add("ticket-picker__hint--limit");
+    } else {
+      hintEl.textContent = t("ticket_picker_hint");
+      hintEl.classList.remove("ticket-picker__hint--limit");
+    }
   }
 
   picker.querySelectorAll("[data-increase]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const pkg = btn.dataset.increase;
+      if (pkg === "vip" && qty.vip >= VIP_SEATS_LEFT) return;
       qty[pkg] += 1;
       render();
     });

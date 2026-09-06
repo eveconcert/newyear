@@ -25,6 +25,12 @@ const db = admin.firestore();
 // client — otherwise someone could submit a fake cheaper total.
 const PACKAGE_PRICES_ETB = { normal: 25000, vip: 50000 };
 
+// Real VVIP seat inventory — only 16 exist. Enforced with a Firestore
+// transaction so two people checking out simultaneously can't both grab
+// the last seats. Rejected orders free their seats; all other statuses
+// (pending_payment, pending_review, approved) hold them.
+const VIP_CAPACITY = 16;
+
 function generateReference() {
   const stamp = Date.now().toString(36).toUpperCase();
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
@@ -52,30 +58,66 @@ module.exports = async (req, res) => {
     normalQty < 0 ||
     vipQty < 0 ||
     totalQty < 1 ||
-    totalQty > 500 // sanity ceiling against bots/fat-fingers, not a real buyer limit
+    totalQty > 500
   ) {
     return res.status(400).json({ error: "Choose at least 1 ticket." });
   }
 
   const reference = generateReference();
-  const totalEtb = normalQty * PACKAGE_PRICES_ETB.normal + vipQty * PACKAGE_PRICES_ETB.vip;
+  const totalEtb =
+    normalQty * PACKAGE_PRICES_ETB.normal + vipQty * PACKAGE_PRICES_ETB.vip;
+  const orderData = {
+    reference,
+    fullName,
+    phone,
+    tickets: { normal: normalQty, vip: vipQty },
+    totalEtb,
+    status: "pending_payment",
+    screenshotUrl: null,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
 
   try {
-    await db.collection("orders").doc(reference).set({
-      reference,
-      fullName,
-      phone,
-      tickets: { normal: normalQty, vip: vipQty },
-      totalEtb,
-      status: "pending_payment",
-      screenshotUrl: null,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    if (vipQty > 0) {
+      // Transaction: count all non-rejected VVIP tickets already sold,
+      // then only proceed if enough seats remain.
+      await db.runTransaction(async (tx) => {
+        const existing = await tx.get(
+          db.collection("orders").where("tickets.vip", ">", 0)
+        );
+        let vipSold = 0;
+        existing.forEach((doc) => {
+          if (doc.data().status !== "rejected") {
+            vipSold += doc.data().tickets?.vip || 0;
+          }
+        });
+        const vipLeft = VIP_CAPACITY - vipSold;
+        if (vipQty > vipLeft) {
+          const err = new Error("VIP_SOLD_OUT");
+          err.vipLeft = Math.max(0, vipLeft);
+          throw err;
+        }
+        tx.set(db.collection("orders").doc(reference), orderData);
+      });
+    } else {
+      await db.collection("orders").doc(reference).set(orderData);
+    }
 
     return res.status(200).json({ reference });
   } catch (err) {
+    if (err.message === "VIP_SOLD_OUT") {
+      return res.status(409).json({
+        error:
+          err.vipLeft === 0
+            ? "VVIP tickets are sold out."
+            : `Only ${err.vipLeft} VVIP seat(s) left. Please lower your quantity.`,
+        vipLeft: err.vipLeft,
+      });
+    }
     console.error("checkout failed:", err);
-    return res.status(500).json({ error: "Could not save your order. Please try again." });
+    return res
+      .status(500)
+      .json({ error: "Could not save your order. Please try again." });
   }
 
   // -----------------------------------------------------------------
