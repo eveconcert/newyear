@@ -667,7 +667,9 @@ section {
 /* Scrollable content — padding keeps it away from edges */
 #modal-body {
   margin: 0;
-  padding: 56px 28px 48px;
+  padding: 16px 12px 80px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .modal__close {
@@ -909,24 +911,34 @@ section {
 }
 
 .order__disclaimer {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: var(--cream);
-  line-height: 1.65;
-  margin-top: 0;
-  margin-bottom: 20px;
-  padding: 18px 20px;
-  border: 3px solid rgba(217, 164, 65, 0.7);
-  border-radius: 24px;
-  background: rgba(4, 10, 24, 0.6);
-  box-shadow: 0 0 22px rgba(217, 164, 65, 0.2),
-    inset 0 0 14px rgba(217, 164, 65, 0.07);
+  line-height: 1.6;
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border: 2.5px solid rgba(217, 164, 65, 0.65);
+  border-radius: 20px;
+  background: rgba(4, 10, 24, 0.65);
+  box-shadow: 0 0 16px rgba(217, 164, 65, 0.18);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.order__disclaimer-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
 }
 
 .order__success {
-  border: 1px solid var(--gold);
-  background: rgba(217, 164, 65, 0.08);
-  padding: 28px;
-  border-radius: 4px;
+  border: 2.5px solid rgba(217, 164, 65, 0.65);
+  background: rgba(4, 10, 24, 0.75);
+  padding: 22px 18px;
+  border-radius: 28px;
+  box-shadow: 0 0 28px rgba(217, 164, 65, 0.2),
+    inset 0 0 20px rgba(217, 164, 65, 0.06);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .order__success h3 {
@@ -1066,15 +1078,16 @@ section {
 
 /* ── Screenshot upload (below Telebirr box) ── */
 .screenshot-upload {
-  margin-top: 20px;
-  padding: 20px 18px 22px;
-  border: 3px solid rgba(217, 164, 65, 0.7);
+  margin-top: 14px;
+  padding: 18px 16px 20px;
+  border: 2.5px solid rgba(217, 164, 65, 0.65);
   border-radius: 28px;
-  background: rgba(4, 10, 24, 0.6);
-  box-shadow: 0 0 28px rgba(217, 164, 65, 0.22),
-    inset 0 0 18px rgba(217, 164, 65, 0.07);
+  background: rgba(4, 10, 24, 0.65);
+  box-shadow: 0 0 24px rgba(217, 164, 65, 0.2);
   display: grid;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .screenshot-upload label {
@@ -1565,33 +1578,6 @@ footer {
     flex: unset;
     max-width: unset;
   }
-}
-
-/* ── Modal header box ───────────────────────────────────────────── */
-.modal__header-box {
-  padding: 22px 20px 20px;
-  margin-bottom: 20px;
-  border: 3px solid rgba(217, 164, 65, 0.7);
-  border-radius: 28px;
-  background: rgba(4, 10, 24, 0.6);
-  box-shadow: 0 0 28px rgba(217, 164, 65, 0.22),
-    inset 0 0 18px rgba(217, 164, 65, 0.07);
-}
-
-.modal__header-box .section__label {
-  margin-bottom: 6px;
-}
-
-.modal__header-box .section__heading {
-  margin-bottom: 12px;
-}
-
-.modal__header-sub {
-  font-size: 0.88rem;
-  color: var(--cream);
-  line-height: 1.65;
-  margin: 0;
-  opacity: 0.85;
 }
 
 /* ── Modal submit / reserve button — gold pill like image ref ───── */
